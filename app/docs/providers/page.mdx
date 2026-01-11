@@ -1,0 +1,139 @@
+# Providers
+
+OpenSploit supports **75+ LLM providers** through the AI SDK and Models.dev. You can use cloud providers or run models locally.
+
+---
+
+## Adding a Provider
+
+1. Run the `/connect` command in the TUI
+2. Select your provider
+3. Enter your API key
+
+Credentials are stored in `~/.local/share/opensploit/auth.json`.
+
+---
+
+## Local Models (Ollama)
+
+For fully local, offline operation, use Ollama:
+
+1. Install Ollama from [ollama.com](https://ollama.com)
+
+2. Pull a model:
+```bash
+ollama pull llama3.2
+```
+
+3. Select Ollama as your provider in OpenSploit
+
+Recommended models for security tasks:
+- `llama3.2` - Good balance of speed and capability
+- `codellama` - Better for code analysis
+- `mixtral` - Strong reasoning for complex tasks
+
+---
+
+## Cloud Providers
+
+### Anthropic (Claude)
+
+```json
+{
+  "provider": {
+    "anthropic": {
+      "options": {
+        "apiKey": "{env:ANTHROPIC_API_KEY}"
+      }
+    }
+  },
+  "model": "anthropic/claude-sonnet-4-5"
+}
+```
+
+### OpenAI
+
+```json
+{
+  "provider": {
+    "openai": {
+      "options": {
+        "apiKey": "{env:OPENAI_API_KEY}"
+      }
+    }
+  },
+  "model": "openai/gpt-4o"
+}
+```
+
+### Google (Gemini)
+
+```json
+{
+  "provider": {
+    "google": {
+      "options": {
+        "apiKey": "{env:GOOGLE_API_KEY}"
+      }
+    }
+  },
+  "model": "google/gemini-pro"
+}
+```
+
+### Amazon Bedrock
+
+```json
+{
+  "provider": {
+    "bedrock": {
+      "options": {
+        "region": "us-east-1"
+      }
+    }
+  },
+  "model": "bedrock/anthropic.claude-3-sonnet"
+}
+```
+
+Bedrock uses AWS credentials from your environment.
+
+---
+
+## Custom Base URL
+
+You can customize the base URL for any provider:
+
+```json
+{
+  "provider": {
+    "anthropic": {
+      "options": {
+        "baseURL": "https://your-proxy.com/v1"
+      }
+    }
+  }
+}
+```
+
+---
+
+## Disabling Providers
+
+Prevent providers from loading even if credentials are available:
+
+```json
+{
+  "disabled_providers": ["openai", "gemini"]
+}
+```
+
+## Enabling Specific Providers
+
+Allow only specific providers:
+
+```json
+{
+  "enabled_providers": ["anthropic", "ollama"]
+}
+```

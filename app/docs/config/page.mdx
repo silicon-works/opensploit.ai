@@ -1,0 +1,159 @@
+# Configuration
+
+You can configure OpenSploit using a JSON config file.
+
+---
+
+## Format
+
+OpenSploit supports both **JSON** and **JSONC** (JSON with Comments) formats.
+
+```json
+{
+  "$schema": "https://opensploit.ai/config.json",
+  "theme": "default",
+  "model": "anthropic/claude-sonnet-4-5",
+  "autoupdate": true
+}
+```
+
+---
+
+## Locations
+
+Configuration files are merged together. Settings from all config locations are combined, where later configs override earlier ones for conflicting keys.
+
+### Global
+
+Place your global config in `~/.config/opensploit/opensploit.json`. Use this for themes, providers, or keybinds.
+
+### Per Project
+
+Add an `opensploit.json` in your project root. This is useful for project-specific settings.
+
+### Custom Path
+
+Specify a custom config file using the `OPENSPLOIT_CONFIG` environment variable:
+
+```bash
+export OPENSPLOIT_CONFIG=/path/to/custom-config.json
+opensploit
+```
+
+---
+
+## Schema
+
+The config file schema is defined at [opensploit.ai/config.json](https://opensploit.ai/config.json).
+
+---
+
+## Options
+
+### Model
+
+Configure the LLM model to use:
+
+```json
+{
+  "model": "anthropic/claude-sonnet-4-5",
+  "small_model": "anthropic/claude-haiku-4-5"
+}
+```
+
+The `small_model` is used for lightweight tasks like title generation.
+
+### Provider
+
+Configure LLM provider settings:
+
+```json
+{
+  "provider": {
+    "anthropic": {
+      "options": {
+        "apiKey": "{env:ANTHROPIC_API_KEY}"
+      }
+    }
+  }
+}
+```
+
+[Learn more about providers →](/docs/providers)
+
+### Tools
+
+Enable or disable specific tools:
+
+```json
+{
+  "tools": {
+    "sqlmap": true,
+    "metasploit": false
+  }
+}
+```
+
+[Learn more about tools →](/docs/tools)
+
+### Permissions
+
+Configure approval requirements for actions:
+
+```json
+{
+  "permission": {
+    "exploit": "ask",
+    "scan_external": "ask"
+  }
+}
+```
+
+### Autoupdate
+
+Control automatic updates:
+
+```json
+{
+  "autoupdate": true
+}
+```
+
+Set to `"notify"` to be notified of updates without auto-installing.
+
+---
+
+## Variables
+
+### Environment Variables
+
+Use `{env:VARIABLE_NAME}` to substitute environment variables:
+
+```json
+{
+  "model": "{env:OPENSPLOIT_MODEL}",
+  "provider": {
+    "anthropic": {
+      "options": {
+        "apiKey": "{env:ANTHROPIC_API_KEY}"
+      }
+    }
+  }
+}
+```
+
+### Files
+
+Use `{file:path/to/file}` to substitute file contents:
+
+```json
+{
+  "provider": {
+    "openai": {
+      "options": {
+        "apiKey": "{file:~/.secrets/openai-key}"
+      }
+    }
+  }
+}
+```

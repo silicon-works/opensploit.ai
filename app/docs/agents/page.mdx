@@ -1,0 +1,160 @@
+# Agents
+
+OpenSploit uses a hierarchical agent system to manage complex penetration testing engagements. This architecture prevents context overflow during long sessions.
+
+---
+
+## Agent Architecture
+
+```
+Master Pentest Agent (Primary)
+├── Maintains high-level strategy and findings
+├── Spawns phase-specific sub-agents
+│
+├── Recon Sub-agent
+│   └── Spawns task-specific agents for scanning
+│
+├── Enumeration Sub-agent
+│   └── Spawns agents for directory fuzzing, vuln scanning
+│
+├── Exploitation Sub-agent
+│   └── Spawns agents for SQLi testing, credential attacks
+│
+└── Reporting Sub-agent
+    └── Aggregates findings into reports
+```
+
+---
+
+## Master Agent
+
+The master agent orchestrates the entire engagement:
+
+- Clarifies target and scope with user before starting
+- Plans attack methodology
+- Spawns phase-specific sub-agents
+- Tracks findings across all phases
+- Requests approval at significant decision points
+- Uses MCP tools exclusively (no custom exploit code)
+
+---
+
+## Sub-Agents
+
+Sub-agents handle specific tasks within each phase:
+
+### Characteristics
+
+- **Focused context** - Each sub-agent starts fresh with task-specific context
+- **Summarized results** - Parents receive summaries, not raw tool output
+- **Background execution** - Run in background, report to parent session
+- **Recursive delegation** - Sub-agents can spawn their own sub-agents
+
+### When Agents Delegate
+
+Agents spawn sub-agents when:
+- Task will generate significant output (scans, enumerations)
+- Task is independent and can run in isolation
+- Multiple tasks can run in parallel
+- Specialized focus is needed
+
+---
+
+## Context Management
+
+Long engagements generate significant context. OpenSploit manages this through:
+
+### Context Isolation
+Each sub-agent starts with focused context for its specific task, preventing bloat from unrelated information.
+
+### Summarization
+Parents receive summaries of sub-agent work, not raw output. This keeps the master agent's context clean.
+
+### Output Storage
+Tool outputs exceeding 5000 characters are stored externally with reference IDs for retrieval when needed.
+
+---
+
+## Built-in Agents
+
+| Agent | Type | Purpose |
+|-------|------|---------|
+| `pentest` | Primary | Master penetration testing orchestrator |
+| `recon` | Sub-agent | Reconnaissance phase |
+| `enum` | Sub-agent | Enumeration phase |
+| `exploit` | Sub-agent | Exploitation phase |
+| `post-exploit` | Sub-agent | Post-exploitation phase |
+| `report` | Sub-agent | Report generation |
+| `general` | Sub-agent | Flexible task handler |
+
+---
+
+## Custom Agents
+
+Define custom agents in your config:
+
+```json
+{
+  "agent": {
+    "web-tester": {
+      "description": "Specialized web application testing",
+      "model": "anthropic/claude-sonnet-4-5",
+      "prompt": "You are a web application security tester...",
+      "tools": {
+        "ffuf": true,
+        "sqlmap": true,
+        "nuclei": true
+      }
+    }
+  }
+}
+```
+
+Or create agent files in `~/.config/opensploit/agent/`:
+
+```markdown
+---
+name: web-tester
+description: Specialized web application testing
+model: anthropic/claude-sonnet-4-5
+---
+
+You are a web application security tester focused on OWASP Top 10 vulnerabilities.
+```
+
+---
+
+## Agent Permissions
+
+Configure what agents can do:
+
+```json
+{
+  "agent": {
+    "readonly-scanner": {
+      "description": "Read-only vulnerability scanner",
+      "permission": {
+        "exploit": "deny",
+        "write": "deny"
+      }
+    }
+  }
+}
+```
+
+---
+
+## Direct Phase Invocation
+
+You can invoke phase agents directly:
+
+```bash
+opensploit --agent recon
+```
+
+Or within a session:
+```
+/agent recon
+```
+
+This is useful when you want to run only a specific phase.

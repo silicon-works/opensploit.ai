@@ -1,0 +1,167 @@
+# CLI Reference
+
+OpenSploit provides both an interactive TUI and command-line options for automation.
+
+---
+
+## Basic Usage
+
+Start the interactive TUI:
+```bash
+opensploit
+```
+
+Run a single command:
+```bash
+opensploit run "Scan 10.10.10.1 for open ports"
+```
+
+---
+
+## Commands
+
+### Core Commands
+
+| Command | Description |
+|---------|-------------|
+| `opensploit` | Start interactive TUI |
+| `opensploit run "<prompt>"` | Execute a single prompt |
+| `opensploit auth login` | Configure LLM provider credentials |
+| `opensploit sessions` | List previous sessions |
+| `opensploit resume <id>` | Resume a previous session |
+
+### Tool Management
+
+| Command | Description |
+|---------|-------------|
+| `opensploit tools` | List available security tools |
+| `opensploit tools pull <name>` | Pre-download a tool container |
+| `opensploit cleanup` | Remove unused Docker images |
+| `opensploit update` | Update registry and check for updates |
+
+### Reporting
+
+| Command | Description |
+|---------|-------------|
+| `opensploit report <session-id>` | Generate report for session |
+| `opensploit report --format html` | Specify output format |
+
+### System
+
+| Command | Description |
+|---------|-------------|
+| `opensploit version` | Display version information |
+| `opensploit doctor` | Check system requirements |
+
+---
+
+## Options
+
+### Global Options
+
+| Option | Description |
+|--------|-------------|
+| `--config <path>` | Use custom config file |
+| `--model <model>` | Override default model |
+| `--agent <name>` | Use specific agent |
+| `--verbose` | Enable verbose output |
+
+### Run Options
+
+| Option | Description |
+|--------|-------------|
+| `--yes` | Auto-approve all prompts |
+| `--no-tools` | Disable tool execution |
+| `--output <file>` | Write output to file |
+
+---
+
+## TUI Commands
+
+Within the interactive TUI, use `/` commands:
+
+### Session
+
+| Command | Description |
+|---------|-------------|
+| `/new` | Start a new session |
+| `/sessions` | List all sessions |
+| `/resume <id>` | Resume a session |
+| `/share` | Share current session |
+
+### Configuration
+
+| Command | Description |
+|---------|-------------|
+| `/connect` | Configure LLM provider |
+| `/models` | List available models |
+| `/model <name>` | Switch model |
+| `/agent <name>` | Switch agent |
+
+### Phase Control
+
+| Command | Description |
+|---------|-------------|
+| `/phase` | Show current phase |
+| `/phase <name>` | Switch to phase |
+| `/findings` | Show current findings |
+
+### Tools
+
+| Command | Description |
+|---------|-------------|
+| `/tools` | List available tools |
+| `/tool <name>` | Get tool info |
+
+### Utilities
+
+| Command | Description |
+|---------|-------------|
+| `/undo` | Undo last action |
+| `/redo` | Redo undone action |
+| `/clear` | Clear screen |
+| `/help` | Show help |
+| `/quit` | Exit OpenSploit |
+
+---
+
+## Environment Variables
+
+| Variable | Description |
+|----------|-------------|
+| `OPENSPLOIT_CONFIG` | Path to config file |
+| `OPENSPLOIT_CONFIG_DIR` | Path to config directory |
+| `OPENSPLOIT_MODEL` | Default model |
+| `ANTHROPIC_API_KEY` | Anthropic API key |
+| `OPENAI_API_KEY` | OpenAI API key |
+| `GOOGLE_API_KEY` | Google API key |
+
+---
+
+## Examples
+
+### Quick Scan
+
+```bash
+opensploit run "Quick scan of 10.10.10.1"
+```
+
+### Targeted Testing
+
+```bash
+opensploit run "Test 10.10.10.1:80 for SQL injection" --agent exploit
+```
+
+### Resume Session
+
+```bash
+opensploit sessions
+# Note the session ID
+opensploit resume abc123
+```
+
+### Generate Report
+
+```bash
+opensploit report abc123 --format html > report.html
+```

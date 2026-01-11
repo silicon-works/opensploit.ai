@@ -1,0 +1,135 @@
+# Getting Started
+
+OpenSploit is an open source AI-powered penetration testing agent. It orchestrates security tools through intelligent automation, guiding you through reconnaissance, enumeration, exploitation, and reporting phases.
+
+---
+
+## Prerequisites
+
+To use OpenSploit, you'll need:
+
+1. **Docker** - Required for running security tools in containers
+2. **A modern terminal emulator** like [WezTerm](https://wezterm.org), [Alacritty](https://alacritty.org), [Ghostty](https://ghostty.org), or [Kitty](https://sw.kovidgoyal.net/kitty/)
+3. **API keys** for the LLM provider you want to use (or use Ollama for local models)
+
+---
+
+## Install
+
+The easiest way to install OpenSploit is through the install script:
+
+```bash
+curl -fsSL https://opensploit.ai/install | bash
+```
+
+You can also install using package managers:
+
+**Using npm:**
+```bash
+npm install -g opensploit
+```
+
+**Using Bun:**
+```bash
+bun install -g opensploit
+```
+
+**Using Homebrew (macOS/Linux):**
+```bash
+brew install opensploit
+```
+
+---
+
+## Configure
+
+OpenSploit supports 75+ LLM providers. You can use cloud providers like Claude, GPT, or Gemini, or run locally with Ollama.
+
+1. Run the `/connect` command to configure your provider:
+
+```bash
+/connect
+```
+
+2. Select your provider and enter your API key.
+
+3. For local models with Ollama:
+
+```bash
+ollama pull llama3.2
+```
+
+Then select Ollama as your provider in OpenSploit.
+
+[Learn more about providers →](/docs/providers)
+
+---
+
+## Quick Start
+
+Navigate to a directory where you want to work:
+
+```bash
+cd /path/to/workspace
+```
+
+Start OpenSploit:
+
+```bash
+opensploit
+```
+
+Describe your target and objective in natural language:
+
+```
+Perform a security assessment on 10.10.10.1
+```
+
+OpenSploit will:
+1. Clarify the scope and target with you
+2. Begin reconnaissance (port scanning, service detection)
+3. Move through enumeration, exploitation, and reporting phases
+4. Request approval before each significant action
+
+---
+
+## Key Concepts
+
+### Phases
+
+OpenSploit follows a structured penetration testing methodology:
+
+| Phase | Description |
+|-------|-------------|
+| **Reconnaissance** | Port scanning, service detection, OS fingerprinting |
+| **Enumeration** | Directory bruteforcing, vulnerability scanning, version detection |
+| **Exploitation** | SQL injection testing, credential attacks, exploit execution |
+| **Post-Exploitation** | Privilege escalation, persistence, lateral movement |
+| **Reporting** | Findings aggregation, report generation |
+
+[Learn more about phases →](/docs/phases)
+
+### Tools
+
+OpenSploit orchestrates 25+ security tools including nmap, sqlmap, ffuf, hydra, nuclei, and metasploit. Tools run in Docker containers and are downloaded on-demand.
+
+[Learn more about tools →](/docs/tools)
+
+### Agents
+
+OpenSploit uses a hierarchical agent system. The master agent orchestrates specialized sub-agents for specific tasks, preventing context overload during long engagements.
+
+[Learn more about agents →](/docs/agents)
+
+---
+
+## Safety
+
+OpenSploit is for **authorized security testing only**. The system includes safeguards:
+
+- Warns before scanning external/non-private IP addresses
+- Requires explicit confirmation for external targets
+- Blocks scanning of forbidden targets (government, military, critical infrastructure)
+- Logs all scan authorizations for audit purposes
+
+[Learn more about security →](/docs/security)

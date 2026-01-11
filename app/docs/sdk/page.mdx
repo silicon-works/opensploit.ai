@@ -1,0 +1,242 @@
+# SDK
+
+The OpenSploit SDK is a type-safe JavaScript/TypeScript client for programmatic control of OpenSploit.
+
+---
+
+## Overview
+
+The SDK enables:
+
+- **Automation** - Script security assessments
+- **Integration** - Connect OpenSploit to other tools
+- **Custom workflows** - Build specialized testing pipelines
+- **Reporting** - Extract and process findings programmatically
+
+---
+
+## Installation
+
+```bash
+npm install @opensploit/sdk
+```
+
+Or with other package managers:
+
+```bash
+bun add @opensploit/sdk
+pnpm add @opensploit/sdk
+yarn add @opensploit/sdk
+```
+
+---
+
+## Quick Start
+
+```typescript
+import { createOpensploit } from "@opensploit/sdk";
+
+// Start OpenSploit and create a client
+const client = await createOpensploit();
+
+// Create a new session
+const session = await client.sessions.create({
+  name: "Automated Scan"
+});
+
+// Send a prompt
+const response = await client.sessions.prompt(session.id, {
+  content: "Scan 10.10.10.1 for open ports"
+});
+
+console.log(response.content);
+```
+
+---
+
+## Client Options
+
+### Start with Server
+
+```typescript
+const client = await createOpensploit({
+  hostname: "127.0.0.1",
+  port: 4096,
+  config: {
+    model: "anthropic/claude-sonnet-4"
+  }
+});
+```
+
+### Connect to Existing Server
+
+```typescript
+import { createOpensploitClient } from "@opensploit/sdk";
+
+const client = createOpensploitClient({
+  hostname: "127.0.0.1",
+  port: 4096
+});
+```
+
+---
+
+## Available APIs
+
+### Sessions
+
+```typescript
+// List sessions
+const sessions = await client.sessions.list();
+
+// Create session
+const session = await client.sessions.create({ name: "Test" });
+
+// Send prompt
+const message = await client.sessions.prompt(session.id, {
+  content: "Enumerate web services"
+});
+
+// Get session history
+const history = await client.sessions.messages(session.id);
+
+// Delete session
+await client.sessions.delete(session.id);
+```
+
+### Files
+
+```typescript
+// Search for files
+const files = await client.files.find({ pattern: "*.xml" });
+
+// Read file content
+const content = await client.files.read({ path: "/path/to/file" });
+
+// Search file contents
+const matches = await client.files.search({
+  query: "password",
+  path: "/findings"
+});
+```
+
+### Configuration
+
+```typescript
+// Get current config
+const config = await client.config.get();
+
+// List available providers
+const providers = await client.config.providers();
+
+// Get available models
+const models = await client.config.models();
+```
+
+### Events
+
+Subscribe to real-time updates:
+
+```typescript
+const unsubscribe = client.events.subscribe((event) => {
+  switch (event.type) {
+    case "message.created":
+      console.log("New message:", event.data);
+      break;
+    case "tool.started":
+      console.log("Tool started:", event.data.name);
+      break;
+    case "tool.completed":
+      console.log("Tool finished:", event.data.result);
+      break;
+  }
+});
+
+// Later: stop listening
+unsubscribe();
+```
+
+---
+
+## Type Safety
+
+The SDK includes comprehensive TypeScript definitions:
+
+```typescript
+import type {
+  Session,
+  Message,
+  Part,
+  ToolResult
+} from "@opensploit/sdk";
+
+function processMessage(message: Message) {
+  for (const part of message.parts) {
+    if (part.type === "tool_result") {
+      handleToolResult(part as ToolResult);
+    }
+  }
+}
+```
+
+---
+
+## Example: Automated Assessment
+
+```typescript
+import { createOpensploit } from "@opensploit/sdk";
+import { writeFile } from "fs/promises";
+
+async function runAssessment(target: string) {
+  const client = await createOpensploit();
+
+  const session = await client.sessions.create({
+    name: `Assessment: ${target}`
+  });
+
+  // Reconnaissance
+  await client.sessions.prompt(session.id, {
+    content: `Perform reconnaissance on ${target}`
+  });
+
+  // Wait for completion and get findings
+  const messages = await client.sessions.messages(session.id);
+
+  // Export report
+  const report = messages
+    .filter(m => m.role === "assistant")
+    .map(m => m.content)
+    .join("\n\n");
+
+  await writeFile(`report-${target}.md`, report);
+
+  console.log("Assessment complete");
+}
+
+runAssessment("10.10.10.1");
+```
+
+---
+
+## Error Handling
+
+```typescript
+import { OpensploitError } from "@opensploit/sdk";
+
+try {
+  await client.sessions.prompt(sessionId, { content: "..." });
+} catch (error) {
+  if (error instanceof OpensploitError) {
+    console.error("API error:", error.message);
+    console.error("Code:", error.code);
+  }
+}
+```
+
+---
+
+## Next Steps
+
+- [Server documentation](/docs/server) - Run OpenSploit as a service
+- [Custom Tools](/docs/custom-tools) - Extend OpenSploit capabilities
+- [Permissions](/docs/permissions) - Configure security controls

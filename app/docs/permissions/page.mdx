@@ -1,0 +1,264 @@
+# Permissions
+
+OpenSploit's permission system controls which actions execute automatically, require approval, or are blocked entirely. This is especially important for security tools that can have significant impact.
+
+---
+
+## Permission States
+
+Each action can have one of three states:
+
+| State | Behavior |
+|-------|----------|
+| `"allow"` | Executes without prompting |
+| `"ask"` | Prompts for user approval |
+| `"deny"` | Blocks execution entirely |
+
+---
+
+## Basic Configuration
+
+Set permissions in `opensploit.json`:
+
+```json
+{
+  "permission": {
+    "*": "ask",
+    "read": "allow",
+    "glob": "allow"
+  }
+}
+```
+
+The `*` wildcard sets the default for all tools.
+
+---
+
+## Permission Types
+
+### File Operations
+
+| Permission | Description | Default |
+|------------|-------------|---------|
+| `read` | Read file contents | `allow` |
+| `edit` | Modify files | `ask` |
+| `write` | Create new files | `ask` |
+| `glob` | Search for files | `allow` |
+| `list` | List directory contents | `allow` |
+
+### Execution
+
+| Permission | Description | Default |
+|------------|-------------|---------|
+| `bash` | Execute shell commands | `ask` |
+| `task` | Spawn sub-agents | `ask` |
+| `skill` | Execute skills | `ask` |
+
+### Network & Web
+
+| Permission | Description | Default |
+|------------|-------------|---------|
+| `websearch` | Search the web | `ask` |
+| `webfetch` | Fetch web content | `ask` |
+
+### Security Tools
+
+| Permission | Description | Default |
+|------------|-------------|---------|
+| `mcp.*` | MCP tool execution | `ask` |
+| `external_target` | Scan external IPs | `ask` |
+| `privileged_container` | Run privileged containers | `ask` |
+
+---
+
+## Pattern Matching
+
+Use patterns for granular control:
+
+```json
+{
+  "permission": {
+    "bash": {
+      "command:nmap *": "allow",
+      "command:rm *": "deny",
+      "command:*": "ask"
+    }
+  }
+}
+```
+
+Pattern syntax:
+- `*` matches any characters
+- `?` matches a single character
+- Other characters match literally
+
+---
+
+## Security-Specific Permissions
+
+### External Targets
+
+Control scanning of non-private IP addresses:
+
+```json
+{
+  "permission": {
+    "external_target": "ask"
+  }
+}
+```
+
+When set to `"ask"`, OpenSploit prompts:
+
+```
+⚠️  EXTERNAL TARGET WARNING
+
+You are about to scan: example.com
+This is NOT a localhost or private IP address.
+
+Before proceeding, confirm:
+☐ I have written authorization to test this target
+☐ I understand unauthorized testing is illegal
+☐ I accept full responsibility for this action
+
+[Cancel]                              [Proceed with Scan]
+```
+
+### Privileged Containers
+
+Some tools require elevated permissions:
+
+```json
+{
+  "permission": {
+    "privileged_container": "ask"
+  }
+}
+```
+
+### Forbidden Targets
+
+Block scanning of certain targets entirely:
+
+```json
+{
+  "permission": {
+    "target:*.gov": "deny",
+    "target:*.mil": "deny"
+  }
+}
+```
+
+---
+
+## Agent-Specific Permissions
+
+Override permissions for specific agents:
+
+```json
+{
+  "permission": {
+    "bash": "ask"
+  },
+  "agents": {
+    "recon": {
+      "permission": {
+        "bash": {
+          "command:nmap *": "allow"
+        }
+      }
+    },
+    "exploit": {
+      "permission": {
+        "mcp.metasploit_*": "ask"
+      }
+    }
+  }
+}
+```
+
+Agent-level permissions take precedence over global settings.
+
+---
+
+## Environment Files
+
+By default, reading sensitive files is blocked:
+
+```json
+{
+  "permission": {
+    "read": {
+      "path:*.env": "deny",
+      "path:*credentials*": "deny",
+      "path:*secret*": "deny"
+    }
+  }
+}
+```
+
+---
+
+## Audit Logging
+
+All permission decisions are logged:
+
+```
+Location: ~/.opensploit/audit.log
+Format: JSON Lines
+Contents: timestamp, session, action, target, decision, user_response
+```
+
+Review the audit log to track what actions were taken during engagements.
+
+---
+
+## Recommended Settings
+
+### Strict Mode
+
+Maximum control for sensitive engagements:
+
+```json
+{
+  "permission": {
+    "*": "ask",
+    "read": "allow",
+    "glob": "allow",
+    "list": "allow"
+  }
+}
+```
+
+### Balanced Mode
+
+Good default for authorized testing:
+
+```json
+{
+  "permission": {
+    "*": "ask",
+    "read": "allow",
+    "glob": "allow",
+    "list": "allow",
+    "bash": {
+      "command:nmap *": "allow",
+      "command:curl *": "allow",
+      "command:*": "ask"
+    }
+  }
+}
+```
+
+### Lab Mode
+
+For testing in isolated environments:
+
+```json
+{
+  "permission": {
+    "*": "allow",
+    "external_target": "deny"
+  }
+}
+```

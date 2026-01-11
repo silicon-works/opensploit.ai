@@ -1,16 +1,17 @@
 export interface NavItem {
   title: string;
-  href: string;
+  href?: string;
   items?: NavItem[];
 }
 
 export const docsNav: NavItem[] = [
+  // Core docs (no category header)
   {
-    title: "Getting Started",
+    title: "Intro",
     href: "/docs",
   },
   {
-    title: "Configuration",
+    title: "Config",
     href: "/docs/config",
   },
   {
@@ -18,23 +19,103 @@ export const docsNav: NavItem[] = [
     href: "/docs/providers",
   },
   {
-    title: "Tools",
-    href: "/docs/tools",
+    title: "Troubleshooting",
+    href: "/docs/troubleshooting",
   },
+  // Usage category
   {
-    title: "Phases",
-    href: "/docs/phases",
+    title: "Usage",
+    items: [
+      {
+        title: "TUI",
+        href: "/docs/tui",
+      },
+      {
+        title: "CLI",
+        href: "/docs/cli",
+      },
+      {
+        title: "Zen",
+        href: "/docs/zen",
+      },
+      {
+        title: "Share",
+        href: "/docs/share",
+      },
+    ],
   },
+  // Configure category
   {
-    title: "Agents",
-    href: "/docs/agents",
+    title: "Configure",
+    items: [
+      {
+        title: "Tools",
+        href: "/docs/tools",
+      },
+      {
+        title: "Rules",
+        href: "/docs/rules",
+      },
+      {
+        title: "Agents",
+        href: "/docs/agents",
+      },
+      {
+        title: "Models",
+        href: "/docs/models",
+      },
+      {
+        title: "Themes",
+        href: "/docs/themes",
+      },
+      {
+        title: "Keybinds",
+        href: "/docs/keybinds",
+      },
+      {
+        title: "Commands",
+        href: "/docs/commands",
+      },
+      {
+        title: "Permissions",
+        href: "/docs/permissions",
+      },
+      {
+        title: "MCP Servers",
+        href: "/docs/mcp-servers",
+      },
+      {
+        title: "Custom Tools",
+        href: "/docs/custom-tools",
+      },
+    ],
   },
-  {
-    title: "CLI",
-    href: "/docs/cli",
-  },
+  // Security category
   {
     title: "Security",
-    href: "/docs/security",
+    items: [
+      {
+        title: "Phases",
+        href: "/docs/phases",
+      },
+      {
+        title: "Security & Legal",
+        href: "/docs/security",
+      },
+    ],
+  },
+  // Develop category
+  {
+    title: "Develop",
+    items: [
+      {
+        title: "SDK",
+        href: "/docs/sdk",
+      },
+      {
+        title: "Server",
+        href: "/docs/server",
+      },
+    ],
   },
 ];

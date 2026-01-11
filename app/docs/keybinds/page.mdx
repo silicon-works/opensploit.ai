@@ -1,0 +1,166 @@
+# Keybinds
+
+OpenSploit uses a leader key system to avoid conflicts with terminal shortcuts. The default leader is `ctrl+x`.
+
+---
+
+## Leader Key
+
+Most keybinds require pressing the leader key first, then the action key. For example:
+
+- `ctrl+x` then `n` → New session
+- `ctrl+x` then `l` → List sessions
+
+Configure the leader key in `opensploit.json`:
+
+```json
+{
+  "keybinds": {
+    "leader": "ctrl+x"
+  }
+}
+```
+
+---
+
+## Session Management
+
+| Keybind | Action |
+|---------|--------|
+| `<leader>n` | New session |
+| `<leader>l` | List sessions |
+| `<leader>c` | Compact session (summarize) |
+| `escape` | Interrupt current action |
+
+---
+
+## Navigation
+
+| Keybind | Action |
+|---------|--------|
+| `ctrl+c` | Exit OpenSploit |
+| `ctrl+d` | Exit OpenSploit |
+| `<leader>q` | Exit OpenSploit |
+| `<leader>b` | Toggle sidebar |
+| `<leader>t` | Theme selector |
+| `<leader>s` | Status view |
+| `<leader>m` | Model list |
+| `<leader>a` | Agent list |
+| `ctrl+p` | Command palette |
+
+---
+
+## Message Controls
+
+| Keybind | Action |
+|---------|--------|
+| `pageup` | Scroll up one page |
+| `pagedown` | Scroll down one page |
+| `ctrl+alt+u` | Scroll up half page |
+| `ctrl+alt+d` | Scroll down half page |
+| `ctrl+g` | Go to first message |
+| `end` | Go to last message |
+| `<leader>y` | Copy last message |
+| `<leader>u` | Undo last action |
+| `<leader>r` | Redo undone action |
+
+---
+
+## Input Editing
+
+Standard readline/emacs-style keybinds:
+
+| Keybind | Action |
+|---------|--------|
+| `ctrl+a` | Move to line start |
+| `ctrl+e` | Move to line end |
+| `alt+f` | Move forward one word |
+| `alt+b` | Move backward one word |
+| `ctrl+d` | Delete character |
+| `ctrl+k` | Delete to end of line |
+| `ctrl+u` | Delete to start of line |
+| `ctrl+w` | Delete previous word |
+| `alt+d` | Delete next word |
+| `ctrl+t` | Transpose characters |
+
+---
+
+## Model & Agent Selection
+
+| Keybind | Action |
+|---------|--------|
+| `f2` | Cycle to next recent model |
+| `shift+f2` | Cycle to previous recent model |
+| `tab` | Cycle to next agent |
+| `shift+tab` | Cycle to previous agent |
+| `ctrl+t` | Cycle model variant |
+
+---
+
+## Customization
+
+Override keybinds in `opensploit.json`:
+
+```json
+{
+  "keybinds": {
+    "leader": "ctrl+x",
+    "session.new": "<leader>n",
+    "session.list": "<leader>l",
+    "session.compact": "<leader>c",
+    "app.quit": "<leader>q",
+    "sidebar.toggle": "<leader>b",
+    "theme.select": "<leader>t",
+    "model.list": "<leader>m",
+    "agent.list": "<leader>a",
+    "message.undo": "<leader>u",
+    "message.redo": "<leader>r",
+    "message.copy": "<leader>y"
+  }
+}
+```
+
+---
+
+## Disabling Keybinds
+
+Set any keybind to `"none"` to disable it:
+
+```json
+{
+  "keybinds": {
+    "session.share": "none",
+    "session.fork": "none"
+  }
+}
+```
+
+---
+
+## Platform Notes
+
+### macOS
+
+Option key (`⌥`) is used for `alt` keybinds. Some terminals require configuration to send proper escape sequences.
+
+### Windows Terminal
+
+Add to `settings.json` to enable `Shift+Enter`:
+
+```json
+{
+  "actions": [
+    {
+      "command": {
+        "action": "sendInput",
+        "input": "\u001b[13;2u"
+      },
+      "keys": "shift+enter"
+    }
+  ]
+}
+```
+
+### Linux
+
+Most terminals work out of the box. For clipboard support, install `xclip` (X11) or `wl-clipboard` (Wayland).

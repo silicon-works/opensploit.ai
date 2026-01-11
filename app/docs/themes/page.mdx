@@ -1,0 +1,167 @@
+# Themes
+
+OpenSploit supports customizable color themes for the terminal interface.
+
+---
+
+## Terminal Requirements
+
+Themes work best with **truecolor support** (24-bit color). Verify your terminal supports it:
+
+```bash
+echo $COLORTERM
+```
+
+Expected output: `truecolor` or `24bit`
+
+If not set, add to your shell profile:
+
+```bash
+export COLORTERM=truecolor
+```
+
+---
+
+## Built-in Themes
+
+OpenSploit includes several themes:
+
+| Theme | Description |
+|-------|-------------|
+| `opensploit` | Default theme with red accents |
+| `system` | Adapts to terminal background |
+| `tokyonight` | Tokyo Night color scheme |
+| `catppuccin` | Catppuccin color palette |
+| `gruvbox` | Gruvbox retro colors |
+| `nord` | Nord arctic colors |
+| `everforest` | Everforest green theme |
+| `kanagawa` | Kanagawa wave colors |
+| `ayu` | Ayu color scheme |
+| `one-dark` | Atom One Dark |
+| `matrix` | Green terminal aesthetic |
+
+---
+
+## Selecting a Theme
+
+### Via Command
+
+```
+/themes
+```
+
+Then select from the list.
+
+### Via Keybind
+
+Press `ctrl+x t` to open the theme selector.
+
+### Via Configuration
+
+Set in `opensploit.json`:
+
+```json
+{
+  "theme": "tokyonight"
+}
+```
+
+---
+
+## Custom Themes
+
+Create custom themes by placing JSON files in:
+
+- `~/.config/opensploit/themes/*.json` - User-wide themes
+- `.opensploit/themes/*.json` - Project-specific themes
+
+### Theme Structure
+
+```json
+{
+  "name": "my-theme",
+  "colors": {
+    "background": "#0a0a0a",
+    "foreground": "#e0e0e0",
+    "primary": "#ff5555",
+    "secondary": "#50fa7b",
+    "accent": "#bd93f9",
+    "error": "#ff5555",
+    "warning": "#f1fa8c",
+    "success": "#50fa7b",
+    "info": "#8be9fd",
+    "muted": "#6272a4",
+    "border": "#44475a"
+  }
+}
+```
+
+### Color Formats
+
+Themes accept:
+
+- Hex colors: `"#ffffff"`
+- ANSI values: `0` - `255`
+- Color references: `"primary"`
+- `"none"` for terminal defaults
+
+### Definitions
+
+Use `defs` for reusable colors:
+
+```json
+{
+  "defs": {
+    "red": "#ff5555",
+    "green": "#50fa7b"
+  },
+  "colors": {
+    "error": "red",
+    "success": "green"
+  }
+}
+```
+
+---
+
+## Theme Hierarchy
+
+Themes are loaded in order (later overrides earlier):
+
+1. Built-in themes
+2. User config (`~/.config/opensploit/themes/`)
+3. Project root (`.opensploit/themes/`)
+4. Current directory
+
+---
+
+## Dark/Light Variants
+
+Create variants for different terminal backgrounds:
+
+```json
+{
+  "name": "my-theme",
+  "colors": {
+    "background": {
+      "dark": "#0a0a0a",
+      "light": "#fafafa"
+    },
+    "foreground": {
+      "dark": "#e0e0e0",
+      "light": "#1a1a1a"
+    }
+  }
+}
+```
+
+The appropriate variant is selected based on terminal background detection.
+
+---
+
+## Tips
+
+- Use high contrast for readability during long sessions
+- Consider color blindness when customizing
+- Test themes in different lighting conditions
+- The `system` theme adapts automatically to your terminal

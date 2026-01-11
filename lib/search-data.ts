@@ -1,0 +1,480 @@
+// Auto-generated search index - do not edit
+export interface SearchEntry {
+  title: string;
+  href: string;
+  content: string;
+  headings: string[];
+}
+
+export const searchData: SearchEntry[] = [
+  {
+    "title": "Agents",
+    "href": "/docs/agents",
+    "content": "OpenSploit uses a hierarchical agent system to manage complex penetration testing engagements. This architecture prevents context overflow during long sessions. Agent Architecture Master Pentest Agent (Primary) ├── Maintains high-level strategy and findings ├── Spawns phase-specific sub-agents │ ├── Recon Sub-agent │   └── Spawns task-specific agents for scanning │ ├── Enumeration Sub-agent │   └── Spawns agents for directory fuzzing, vuln scanning │ ├── Exploitation Sub-agent │   └── Spawns agents for SQLi testing, credential attacks │ └── Reporting Sub-agent └── Aggregates findings into reports Master Agent The master agent orchestrates the entire engagement: - Clarifies target and scope with user before starting - Plans attack methodology - Spawns phase-specific sub-agents - Tracks findings across all phases - Requests approval at significant decision points - Uses MCP tools exclusively (no custom exploit code) Sub-Agents Sub-agents handle specific tasks within each phase: Characteristics - Focused context - Each sub-agent starts fresh with task-specific context - Summarized results - Parents receive summaries, not raw tool output - Background execution - Run in background, report to parent session - Recursive delegation - Sub-agents can spawn their own sub-agents When Agents Delegate Agents spawn sub-agents when: - Task will generate significant output (scans, enumerations) - Task is independent and can run in isolation - Multiple tasks can run in parallel - Specialized focus is needed Context Management Long engagements generate significant context. OpenSploit manages this through: Context Isolation Each sub-agent starts with focused context for its specific task, preventing bloat from unrelated information. Summarization Parents receive summaries of sub-agent work, not raw output. This keeps the master agent's context clean. Output Storage Tool outputs exceeding 5000 characters are stored externally with reference IDs for retrieval when needed. Built-in Agents",
+    "headings": [
+      "Agent Architecture",
+      "Master Agent",
+      "Sub-Agents",
+      "Characteristics",
+      "When Agents Delegate",
+      "Context Management",
+      "Context Isolation",
+      "Summarization",
+      "Output Storage",
+      "Built-in Agents",
+      "Custom Agents",
+      "Agent Permissions",
+      "Direct Phase Invocation"
+    ]
+  },
+  {
+    "title": "CLI Reference",
+    "href": "/docs/cli",
+    "content": "OpenSploit provides both an interactive TUI and command-line options for automation. Basic Usage Start the interactive TUI: opensploit Run a single command: opensploit run \"Scan 10.10.10.1 for open ports\" Commands Core Commands Command   Description --------- ------------- opensploit   Start interactive TUI opensploit run \"<prompt>\"   Execute a single prompt opensploit auth login   Configure LLM provider credentials opensploit sessions   List previous sessions opensploit resume <id>   Resume a previous session Tool Management Command   Description --------- ------------- opensploit tools   List available security tools opensploit tools pull <name>   Pre-download a tool container opensploit cleanup   Remove unused Docker images opensploit update   Update registry and check for updates Reporting Command   Description --------- ------------- opensploit report <session-id>   Generate report for session opensploit report --format html   Specify output format System Command   Description --------- ------------- opensploit version   Display version information opensploit doctor   Check system requirements Options Global Options Option   Description -------- ------------- --config <path>   Use custom config file --model <model>   Override default model --agent <name>   Use specific agent --verbose   Enable verbose output Run Options Option   Description -------- ------------- --yes   Auto-approve all prompts --no-tools   Disable tool execution --output <file>   Write output to file TUI Commands Within the interactive TUI, use / commands: Session Command   Description --------- ------------- /new   Start a new session /sessions   List all sessions /resume <id>   Resume a session /share   Share current session Configuration Command   Description --------- ------------- /connect   Configure LLM provider /models   List available models /model <name>   Switch model /agent <name>   Switch agent Phase Control Command   Description --------- ------------- /phase   Show current phas",
+    "headings": [
+      "Basic Usage",
+      "Commands",
+      "Core Commands",
+      "Tool Management",
+      "Reporting",
+      "System",
+      "Options",
+      "Global Options",
+      "Run Options",
+      "TUI Commands",
+      "Session",
+      "Configuration",
+      "Phase Control",
+      "Tools",
+      "Utilities",
+      "Environment Variables",
+      "Examples",
+      "Quick Scan",
+      "Targeted Testing",
+      "Resume Session",
+      "Generate Report"
+    ]
+  },
+  {
+    "title": "Commands",
+    "href": "/docs/commands",
+    "content": "OpenSploit supports slash commands for quick actions. Type / in the input to see available commands. Built-in Commands Session Management Command   Description --------- ------------- /new   Start a new session /sessions   List and switch between sessions /compact   Summarize the current session to save context /export   Export conversation to Markdown Configuration Command   Description --------- ------------- /connect   Add or update provider API keys /models   List available models /themes   List and switch themes /help   Display help and keybinds Actions Command   Description --------- ------------- /undo   Revert the last message and any file changes /redo   Restore an undone action /details   Toggle verbose tool output /editor   Compose message in external editor Custom Commands Create custom commands to automate common workflows. Define them in: - .opensploit/command/.md - Project-specific commands - ~/.config/opensploit/command/.md - Global commands Example: Quick Scan Create .opensploit/command/quickscan.md: description: Run a quick port scan on a target args: - name: target description: IP address or hostname to scan Run a quick TCP SYN scan on {{target}} focusing on common ports. Use nmap with service version detection enabled. Usage: /quickscan 10.10.10.1 Example: Web Enum Create .opensploit/command/webenum.md: description: Enumerate a web application args: - name: url description: Target URL to enumerate Perform web enumeration on {{url}}: 1. Fingerprint web technologies 2. Discover directories and files 3. Check for common vulnerabilities 4. Report findings Usage: /webenum https://target.local Command Format Custom command files support: Front Matter description: Short description shown in command list agent: security   Optional: specific agent to use model: claude-3-5-sonnet   Optional: specific model args: - name: argname description: Argument description required: true   Optional, default false Body The command body is the prompt sent to the agent. ",
+    "headings": [
+      "Built-in Commands",
+      "Session Management",
+      "Configuration",
+      "Actions",
+      "Custom Commands",
+      "Example: Quick Scan",
+      "Example: Web Enum",
+      "Command Format",
+      "Front Matter",
+      "Body",
+      "Shell Commands",
+      "File References",
+      "Command Arguments",
+      "Tips"
+    ]
+  },
+  {
+    "title": "Configuration",
+    "href": "/docs/config",
+    "content": "You can configure OpenSploit using a JSON config file. Format OpenSploit supports both JSON and JSONC (JSON with Comments) formats. { \"$schema\": \"https://opensploit.ai/config.json\", \"theme\": \"default\", \"model\": \"anthropic/claude-sonnet-4-5\", \"autoupdate\": true } Locations Configuration files are merged together. Settings from all config locations are combined, where later configs override earlier ones for conflicting keys. Global Place your global config in ~/.config/opensploit/opensploit.json. Use this for themes, providers, or keybinds. Per Project Add an opensploit.json in your project root. This is useful for project-specific settings. Custom Path Specify a custom config file using the OPENSPLOITCONFIG environment variable: export OPENSPLOITCONFIG=/path/to/custom-config.json opensploit Schema The config file schema is defined at opensploit.ai/config.json. Options Model Configure the LLM model to use: { \"model\": \"anthropic/claude-sonnet-4-5\", \"smallmodel\": \"anthropic/claude-haiku-4-5\" } The smallmodel is used for lightweight tasks like title generation. Provider Configure LLM provider settings: { \"provider\": { \"anthropic\": { \"options\": { \"apiKey\": \"{env:ANTHROPICAPIKEY}\" } } } } Learn more about providers → Tools Enable or disable specific tools: { \"tools\": { \"sqlmap\": true, \"metasploit\": false } } Learn more about tools → Permissions Configure approval requirements for actions: { \"permission\": { \"exploit\": \"ask\", \"scanexternal\": \"ask\" } } Autoupdate Control automatic updates: { \"autoupdate\": true } Set to \"notify\" to be notified of updates without auto-installing. Variables Environment Variables Use {env:VARIABLENAME} to substitute environment variables: { \"model\": \"{env:OPENSPLOITMODEL}\", \"provider\": { \"anthropic\": { \"options\": { \"apiKey\": \"{env:ANTHROPICAPIKEY}\" } } } } Files Use {file:path/to/file} to substitute file contents: { \"provider\": { \"openai\": { \"options\": { \"apiKey\": \"{file:~/.secrets/openai-key}\" } } } }",
+    "headings": [
+      "Format",
+      "Locations",
+      "Global",
+      "Per Project",
+      "Custom Path",
+      "Schema",
+      "Options",
+      "Model",
+      "Provider",
+      "Tools",
+      "Permissions",
+      "Autoupdate",
+      "Variables",
+      "Environment Variables",
+      "Files"
+    ]
+  },
+  {
+    "title": "Custom Tools",
+    "href": "/docs/custom-tools",
+    "content": "Extend OpenSploit by creating custom tools that the AI agent can call during engagements. Overview Custom tools allow you to: - Integrate proprietary security scripts - Add tools not in the standard registry - Create workflow automations - Wrap existing command-line tools Creating Tools File Location Place tool files in: - .opensploit/tool/ - Project-specific tools - ~/.config/opensploit/tool/ - Global tools File Format Tools are defined in TypeScript or JavaScript: // .opensploit/tool/portscan.ts import { tool } from \"opensploit\"; export default tool({ name: \"portscan\", description: \"Quick TCP port scan on a target\", schema: tool.schema({ target: tool.string().describe(\"IP address or hostname\"), ports: tool.string().optional().describe(\"Port range (default: 1-1000)\"), }), async execute({ target, ports = \"1-1000\" }, context) { const result = await Bun.$nmap -p ${ports} ${target}.text(); return { output: result }; }, }); Tool Structure Name The filename becomes the tool name. Multiple exports create names like <filename><exportname>. Description Clear description helps the AI understand when to use the tool: description: \"Scan for open ports using TCP SYN scan\" Schema Define parameters using the schema helper (Zod-based): schema: tool.schema({ target: tool.string().describe(\"Target IP or hostname\"), aggressive: tool.boolean().optional().describe(\"Enable aggressive scan\"), timeout: tool.number().optional().describe(\"Timeout in seconds\"), }) Execute Function The function that runs when the tool is called: async execute(args, context) { // args contains the validated parameters // context contains session information return { output: \"result\" }; } Context Object The execute function receives context: interface Context { agent: string;      // Current agent name sessionID: string;  // Session identifier messageID: string;  // Message identifier workdir: string;    // Working directory } Use context for logging or conditional behavior: async execute(args, context) { conso",
+    "headings": [
+      "Overview",
+      "Creating Tools",
+      "File Location",
+      "File Format",
+      "Tool Structure",
+      "Name",
+      "Description",
+      "Schema",
+      "Execute Function",
+      "Context Object",
+      "Calling External Scripts",
+      "Docker Integration",
+      "Error Handling",
+      "Multiple Tools Per File",
+      "Best Practices"
+    ]
+  },
+  {
+    "title": "Keybinds",
+    "href": "/docs/keybinds",
+    "content": "OpenSploit uses a leader key system to avoid conflicts with terminal shortcuts. The default leader is ctrl+x. Leader Key Most keybinds require pressing the leader key first, then the action key. For example: - ctrl+x then n → New session - ctrl+x then l → List sessions Configure the leader key in opensploit.json: { \"keybinds\": { \"leader\": \"ctrl+x\" } } Session Management Keybind   Action --------- -------- <leader>n   New session <leader>l   List sessions <leader>c   Compact session (summarize) escape   Interrupt current action Navigation Keybind   Action --------- -------- ctrl+c   Exit OpenSploit ctrl+d   Exit OpenSploit <leader>q   Exit OpenSploit <leader>b   Toggle sidebar <leader>t   Theme selector <leader>s   Status view <leader>m   Model list <leader>a   Agent list ctrl+p   Command palette Message Controls Keybind   Action --------- -------- pageup   Scroll up one page pagedown   Scroll down one page ctrl+alt+u   Scroll up half page ctrl+alt+d   Scroll down half page ctrl+g   Go to first message end   Go to last message <leader>y   Copy last message <leader>u   Undo last action <leader>r   Redo undone action Input Editing Standard readline/emacs-style keybinds: Keybind   Action --------- -------- ctrl+a   Move to line start ctrl+e   Move to line end alt+f   Move forward one word alt+b   Move backward one word ctrl+d   Delete character ctrl+k   Delete to end of line ctrl+u   Delete to start of line ctrl+w   Delete previous word alt+d   Delete next word ctrl+t   Transpose characters Model & Agent Selection Keybind   Action --------- -------- f2   Cycle to next recent model shift+f2   Cycle to previous recent model tab   Cycle to next agent shift+tab   Cycle to previous agent ctrl+t   Cycle model variant Customization Override keybinds in opensploit.json: { \"keybinds\": { \"leader\": \"ctrl+x\", \"session.new\": \"<leader>n\", \"session.list\": \"<leader>l\", \"session.compact\": \"<leader>c\", \"app.quit\": \"<leader>q\", \"sidebar.toggle\": \"<leader>b\", \"theme.select\": \"<leader>t\", \"",
+    "headings": [
+      "Leader Key",
+      "Session Management",
+      "Navigation",
+      "Message Controls",
+      "Input Editing",
+      "Model & Agent Selection",
+      "Customization",
+      "Disabling Keybinds",
+      "Platform Notes",
+      "macOS",
+      "Windows Terminal",
+      "Linux"
+    ]
+  },
+  {
+    "title": "MCP Servers",
+    "href": "/docs/mcp-servers",
+    "content": "OpenSploit integrates security tools through the Model Context Protocol (MCP). Tools run as MCP servers in Docker containers, providing isolation and consistency. Overview MCP servers extend OpenSploit's capabilities by providing: - Security tools - nmap, sqlmap, ffuf, hydra, etc. - Isolated execution - Tools run in containers - Consistent environments - Same tool versions across systems - On-demand loading - Tools download when first used How It Works 1. You request an action (e.g., \"scan this target\") 2. OpenSploit queries the Tool Registry to find appropriate tools 3. The MCP server for that tool starts in a Docker container 4. The agent executes the tool via MCP protocol 5. Results are returned and analyzed Tool Registry OpenSploit discovers tools via the Tool Registry, a RAG-based system that matches your requests to available tools. The registry is cached locally at ~/.opensploit/registry.yaml and updated from opensploit.ai. Registry Search When you describe a task, OpenSploit searches the registry using: - Semantic similarity (40%) - Natural language matching - Selection level (40%) - Tool specificity ranking - Phase match (20%) - Current penetration testing phase Configuration Configure MCP servers in opensploit.json: { \"mcp\": { \"nmap\": { \"enabled\": true }, \"sqlmap\": { \"enabled\": true }, \"metasploit\": { \"enabled\": false } } } Enable/Disable Tools Toggle tools globally: { \"mcp\": { \"hydra\": { \"enabled\": false } } } Custom Servers Add custom MCP servers: { \"mcp\": { \"my-tool\": { \"type\": \"local\", \"command\": [\"docker\", \"run\", \"-i\", \"my-tool-image\"], \"enabled\": true } } } Local vs Remote Servers Local Servers Run on your machine via Docker: { \"mcp\": { \"custom-scanner\": { \"type\": \"local\", \"command\": [\"docker\", \"run\", \"-i\", \"custom-scanner:latest\"], \"timeout\": 10000 } } } Remote Servers Connect to remote MCP endpoints: { \"mcp\": { \"cloud-tool\": { \"type\": \"remote\", \"url\": \"https://mcp.example.com/tool\", \"headers\": { \"Authorization\": \"Bearer ${TOOLAPIKEY}\" } } } } Authe",
+    "headings": [
+      "Overview",
+      "How It Works",
+      "Tool Registry",
+      "Registry Search",
+      "Configuration",
+      "Enable/Disable Tools",
+      "Custom Servers",
+      "Local vs Remote Servers",
+      "Local Servers",
+      "Remote Servers",
+      "Authentication",
+      "Tool Permissions",
+      "Container Security",
+      "Available Tools",
+      "Troubleshooting",
+      "Tool Not Found",
+      "Container Timeout",
+      "Network Issues"
+    ]
+  },
+  {
+    "title": "Models",
+    "href": "/docs/models",
+    "content": "OpenSploit supports 75+ LLM providers through the AI SDK. Configure providers and select models to power your security assessments. Provider Setup Before using a model, configure the provider via /connect: /connect Select your provider and enter your API key. Model Selection Select a model with the /models command: /models Or use the keybind ctrl+x m to open the model selector. Recommended Models For security testing, we recommend models with strong reasoning and tool-calling capabilities: Model   Provider   Best For ------- ---------- ---------- Claude Opus 4.5   Anthropic   Complex reasoning, exploitation Claude Sonnet 4   Anthropic   Balanced performance GPT-4o   OpenAI   General purpose Gemini Pro   Google   Fast enumeration > Only models with strong tool-calling abilities work well with OpenSploit's security tools. Default Model Set a default model in opensploit.json: { \"model\": \"anthropic/claude-sonnet-4-20250514\" } Format: providerid/modelid Model Configuration Configure model-specific settings: { \"model\": \"anthropic/claude-sonnet-4-20250514\", \"models\": { \"anthropic/claude-sonnet-4-20250514\": { \"temperature\": 0.7, \"maxTokens\": 8192 } } } Variants Variants are different configurations for the same model. Use them for different tasks: { \"models\": { \"anthropic/claude-sonnet-4-20250514\": { \"variants\": { \"default\": { \"temperature\": 0.7 }, \"precise\": { \"temperature\": 0.2 }, \"creative\": { \"temperature\": 0.9 } } } } } Cycle between variants with ctrl+t. Local Models Run models locally with Ollama: 1. Install Ollama: bash curl -fsSL https://ollama.ai/install.sh   sh 2. Pull a model: bash ollama pull llama3.2 ollama pull codellama 3. Connect in OpenSploit: /connect Select \"Ollama\" and configure. 4. Set as default: json { \"model\": \"ollama/llama3.2\" } Model Priority At startup, OpenSploit selects models in this order: 1. Command-line flag (--model or -m) 2. Config file specification 3. Last used model 4. First available model Per-Agent Models Assign different models to d",
+    "headings": [
+      "Provider Setup",
+      "Model Selection",
+      "Recommended Models",
+      "Default Model",
+      "Model Configuration",
+      "Variants",
+      "Local Models",
+      "Model Priority",
+      "Per-Agent Models",
+      "Token Limits"
+    ]
+  },
+  {
+    "title": "Getting Started",
+    "href": "/docs",
+    "content": "OpenSploit is an open source AI-powered penetration testing agent. It orchestrates security tools through intelligent automation, guiding you through reconnaissance, enumeration, exploitation, and reporting phases. Prerequisites To use OpenSploit, you'll need: 1. Docker - Required for running security tools in containers 2. A modern terminal emulator like WezTerm, Alacritty, Ghostty, or Kitty 3. API keys for the LLM provider you want to use (or use Ollama for local models) Install The easiest way to install OpenSploit is through the install script: curl -fsSL https://opensploit.ai/install   bash You can also install using package managers: Using npm: npm install -g opensploit Using Bun: bun install -g opensploit Using Homebrew (macOS/Linux): brew install opensploit Configure OpenSploit supports 75+ LLM providers. You can use cloud providers like Claude, GPT, or Gemini, or run locally with Ollama. 1. Run the /connect command to configure your provider: /connect 2. Select your provider and enter your API key. 3. For local models with Ollama: ollama pull llama3.2 Then select Ollama as your provider in OpenSploit. Learn more about providers → Quick Start Navigate to a directory where you want to work: cd /path/to/workspace Start OpenSploit: opensploit Describe your target and objective in natural language: Perform a security assessment on 10.10.10.1 OpenSploit will: 1. Clarify the scope and target with you 2. Begin reconnaissance (port scanning, service detection) 3. Move through enumeration, exploitation, and reporting phases 4. Request approval before each significant action Practical Workflows Reconnaissance Ask OpenSploit to scan a target: Scan 192.168.1.0/24 for open ports and services The agent will use nmap to discover hosts and services, presenting findings as it goes. Web Application Testing Reference a target URL for web testing: Test https://target.local for common web vulnerabilities OpenSploit will enumerate directories, fingerprint technologies, and test f",
+    "headings": [
+      "Prerequisites",
+      "Install",
+      "Configure",
+      "Quick Start",
+      "Practical Workflows",
+      "Reconnaissance",
+      "Web Application Testing",
+      "Credential Testing",
+      "Reporting",
+      "File References",
+      "Shell Commands",
+      "Key Concepts",
+      "Phases",
+      "Tools",
+      "Agents",
+      "Safety"
+    ]
+  },
+  {
+    "title": "Permissions",
+    "href": "/docs/permissions",
+    "content": "OpenSploit's permission system controls which actions execute automatically, require approval, or are blocked entirely. This is especially important for security tools that can have significant impact. Permission States Each action can have one of three states: State   Behavior ------- ---------- \"allow\"   Executes without prompting \"ask\"   Prompts for user approval \"deny\"   Blocks execution entirely Basic Configuration Set permissions in opensploit.json: { \"permission\": { \"\": \"ask\", \"read\": \"allow\", \"glob\": \"allow\" } } The  wildcard sets the default for all tools. Permission Types File Operations Permission   Description   Default ------------ ------------- --------- read   Read file contents   allow edit   Modify files   ask write   Create new files   ask glob   Search for files   allow list   List directory contents   allow Execution Permission   Description   Default ------------ ------------- --------- bash   Execute shell commands   ask task   Spawn sub-agents   ask skill   Execute skills   ask Network & Web Permission   Description   Default ------------ ------------- --------- websearch   Search the web   ask webfetch   Fetch web content   ask Security Tools Permission   Description   Default ------------ ------------- --------- mcp.   MCP tool execution   ask externaltarget   Scan external IPs   ask privilegedcontainer   Run privileged containers   ask Pattern Matching Use patterns for granular control: { \"permission\": { \"bash\": { \"command:nmap \": \"allow\", \"command:rm \": \"deny\", \"command:\": \"ask\" } } } Pattern syntax: -  matches any characters - ? matches a single character - Other characters match literally Security-Specific Permissions External Targets Control scanning of non-private IP addresses: { \"permission\": { \"externaltarget\": \"ask\" } } When set to \"ask\", OpenSploit prompts: ⚠️  EXTERNAL TARGET WARNING You are about to scan: example.com This is NOT a localhost or private IP address. Before proceeding, confirm: ☐ I have written authorization to test ",
+    "headings": [
+      "Permission States",
+      "Basic Configuration",
+      "Permission Types",
+      "File Operations",
+      "Execution",
+      "Network & Web",
+      "Security Tools",
+      "Pattern Matching",
+      "Security-Specific Permissions",
+      "External Targets",
+      "Privileged Containers",
+      "Forbidden Targets",
+      "Agent-Specific Permissions",
+      "Environment Files",
+      "Audit Logging",
+      "Recommended Settings",
+      "Strict Mode",
+      "Balanced Mode",
+      "Lab Mode"
+    ]
+  },
+  {
+    "title": "Penetration Testing Phases",
+    "href": "/docs/phases",
+    "content": "OpenSploit follows a structured penetration testing methodology with five phases. The agent automatically transitions between phases based on findings, though you can override this manually. Phase Overview Reconnaissance → Enumeration → Exploitation → Post-Exploitation → Reporting 1. Reconnaissance Goal: Discover what's running on the target The first phase focuses on understanding the attack surface: - Port scanning (TCP/UDP) - Service detection and version identification - OS fingerprinting - Web technology detection Key Tools: - nmap - Port scanning and service detection - web-fingerprint - Web technology identification - whatweb - Additional web fingerprinting Example: > Perform reconnaissance on 10.10.10.1 Running nmap full port scan... Found open ports: 22/tcp (SSH), 80/tcp (HTTP), 443/tcp (HTTPS) Detected OS: Linux (Ubuntu) Web server: nginx 1.18.0 2. Enumeration Goal: Gather detailed information about discovered services With services identified, enumerate them deeply: - Directory and file discovery - Vulnerability scanning - Version-specific CVE research - Application mapping Key Tools: - ffuf / gobuster - Directory bruteforcing - nikto - Web vulnerability scanning - nuclei - Template-based scanning - cve-lookup - CVE research Example: > Enumerate the web application on port 80 Running directory scan... Found: /admin, /api, /uploads, /backup Running nuclei vulnerability scan... Found: CVE-2021-XXXXX in detected CMS 3. Exploitation Goal: Gain initial access to the target Attempt to exploit discovered vulnerabilities: - SQL injection testing - Credential attacks - Known vulnerability exploitation - Custom exploit execution Key Tools: - sqlmap - SQL injection - hydra - Credential brute-forcing - metasploit - Exploitation framework - exploit-runner - Custom exploits Example: > Test the login form for SQL injection Running sqlmap on /login endpoint... Vulnerability found: time-based blind SQL injection Extracting database schema... Found credentials in users tab",
+    "headings": [
+      "Phase Overview",
+      "1. Reconnaissance",
+      "2. Enumeration",
+      "3. Exploitation",
+      "4. Post-Exploitation",
+      "5. Reporting",
+      "Phase Transitions",
+      "Phase-Appropriate Tools"
+    ]
+  },
+  {
+    "title": "Providers",
+    "href": "/docs/providers",
+    "content": "OpenSploit supports 75+ LLM providers through the AI SDK and Models.dev. You can use cloud providers or run models locally. Adding a Provider 1. Run the /connect command in the TUI 2. Select your provider 3. Enter your API key Credentials are stored in ~/.local/share/opensploit/auth.json. Local Models (Ollama) For fully local, offline operation, use Ollama: 1. Install Ollama from ollama.com 2. Pull a model: ollama pull llama3.2 3. Select Ollama as your provider in OpenSploit Recommended models for security tasks: - llama3.2 - Good balance of speed and capability - codellama - Better for code analysis - mixtral - Strong reasoning for complex tasks Cloud Providers Anthropic (Claude) { \"provider\": { \"anthropic\": { \"options\": { \"apiKey\": \"{env:ANTHROPICAPIKEY}\" } } }, \"model\": \"anthropic/claude-sonnet-4-5\" } OpenAI { \"provider\": { \"openai\": { \"options\": { \"apiKey\": \"{env:OPENAIAPIKEY}\" } } }, \"model\": \"openai/gpt-4o\" } Google (Gemini) { \"provider\": { \"google\": { \"options\": { \"apiKey\": \"{env:GOOGLEAPIKEY}\" } } }, \"model\": \"google/gemini-pro\" } Amazon Bedrock { \"provider\": { \"bedrock\": { \"options\": { \"region\": \"us-east-1\" } } }, \"model\": \"bedrock/anthropic.claude-3-sonnet\" } Bedrock uses AWS credentials from your environment. Custom Base URL You can customize the base URL for any provider: { \"provider\": { \"anthropic\": { \"options\": { \"baseURL\": \"https://your-proxy.com/v1\" } } } } Disabling Providers Prevent providers from loading even if credentials are available: { \"disabledproviders\": [\"openai\", \"gemini\"] } Enabling Specific Providers Allow only specific providers: { \"enabledproviders\": [\"anthropic\", \"ollama\"] }",
+    "headings": [
+      "Adding a Provider",
+      "Local Models (Ollama)",
+      "Cloud Providers",
+      "Anthropic (Claude)",
+      "OpenAI",
+      "Google (Gemini)",
+      "Amazon Bedrock",
+      "Custom Base URL",
+      "Disabling Providers",
+      "Enabling Specific Providers"
+    ]
+  },
+  {
+    "title": "Rules",
+    "href": "/docs/rules",
+    "content": "OpenSploit allows customization through an AGENTS.md file containing custom instructions that guide the AI's behavior for your specific engagement context. Overview Rules help you: - Define engagement scope and boundaries - Set methodology preferences - Specify tool configurations - Establish reporting requirements - Share context across sessions Setup Generate a project-specific AGENTS.md file using the /init command: /init OpenSploit analyzes your workspace and creates an initial configuration. Commit this file to version control for team consistency. File Locations Project-Level Place AGENTS.md in the project root. Rules apply only within that directory and subdirectories. /pentest-engagement/ ├── AGENTS.md           Rules for this engagement ├── scope.txt └── findings/ Global-Level Place rules at ~/.config/opensploit/AGENTS.md to apply them across all sessions. Useful for personal preferences and default configurations. Precedence OpenSploit searches for rules in this order: 1. Local files by traversing up from the current directory 2. Global file at ~/.config/opensploit/AGENTS.md When both exist, they combine together. Example AGENTS.md Engagement Rules Scope - Target: 10.10.10.0/24 - Authorized systems only - No denial of service testing - Web applications on ports 80, 443, 8080 Methodology - Follow OWASP Testing Guide - Prioritize critical findings - Document all exploitation attempts Tools - Prefer nmap for port scanning - Use nuclei for vulnerability scanning - SQLMap for SQL injection testing Reporting - Generate findings in markdown format - Include severity ratings (Critical, High, Medium, Low) - Capture screenshots where possible Advanced Configuration Specify additional rule files in opensploit.json: { \"instructions\": [ \"SCOPE.md\", \"docs/methodology.md\" ] } This supports glob patterns for complex projects: { \"instructions\": [ \"engagements//rules.md\" ] } External File References Reference external files in your rules using the @ syntax: Engagement Rules",
+    "headings": [
+      "Overview",
+      "Setup",
+      "File Locations",
+      "Project-Level",
+      "Global-Level",
+      "Precedence",
+      "Example AGENTS.md",
+      "Scope",
+      "Methodology",
+      "Tools",
+      "Reporting",
+      "Advanced Configuration",
+      "External File References",
+      "Best Practices"
+    ]
+  },
+  {
+    "title": "SDK",
+    "href": "/docs/sdk",
+    "content": "The OpenSploit SDK is a type-safe JavaScript/TypeScript client for programmatic control of OpenSploit. Overview The SDK enables: - Automation - Script security assessments - Integration - Connect OpenSploit to other tools - Custom workflows - Build specialized testing pipelines - Reporting - Extract and process findings programmatically Installation npm install @opensploit/sdk Or with other package managers: bun add @opensploit/sdk pnpm add @opensploit/sdk yarn add @opensploit/sdk Quick Start import { createOpensploit } from \"@opensploit/sdk\"; // Start OpenSploit and create a client const client = await createOpensploit(); // Create a new session const session = await client.sessions.create({ name: \"Automated Scan\" }); // Send a prompt const response = await client.sessions.prompt(session.id, { content: \"Scan 10.10.10.1 for open ports\" }); console.log(response.content); Client Options Start with Server const client = await createOpensploit({ hostname: \"127.0.0.1\", port: 4096, config: { model: \"anthropic/claude-sonnet-4\" } }); Connect to Existing Server import { createOpensploitClient } from \"@opensploit/sdk\"; const client = createOpensploitClient({ hostname: \"127.0.0.1\", port: 4096 }); Available APIs Sessions // List sessions const sessions = await client.sessions.list(); // Create session const session = await client.sessions.create({ name: \"Test\" }); // Send prompt const message = await client.sessions.prompt(session.id, { content: \"Enumerate web services\" }); // Get session history const history = await client.sessions.messages(session.id); // Delete session await client.sessions.delete(session.id); Files // Search for files const files = await client.files.find({ pattern: \".xml\" }); // Read file content const content = await client.files.read({ path: \"/path/to/file\" }); // Search file contents const matches = await client.files.search({ query: \"password\", path: \"/findings\" }); Configuration // Get current config const config = await client.config.get(); // List ",
+    "headings": [
+      "Overview",
+      "Installation",
+      "Quick Start",
+      "Client Options",
+      "Start with Server",
+      "Connect to Existing Server",
+      "Available APIs",
+      "Sessions",
+      "Files",
+      "Configuration",
+      "Events",
+      "Type Safety",
+      "Example: Automated Assessment",
+      "Error Handling",
+      "Next Steps"
+    ]
+  },
+  {
+    "title": "Security & Legal",
+    "href": "/docs/security",
+    "content": "OpenSploit is designed for authorized security testing only. This page covers the safety features and legal considerations. Authorization Requirements > You must have explicit written permission before testing any system. Unauthorized access to computer systems is illegal under laws including: - Computer Fraud and Abuse Act (CFAA) - United States - Computer Misuse Act - United Kingdom - Similar legislation in most countries worldwide Violations can result in criminal prosecution, civil liability, and imprisonment. Built-in Safeguards Target Validation OpenSploit warns before scanning non-private IP addresses: ┌─────────────────────────────────────────────────────────────┐ │  ⚠️  EXTERNAL TARGET WARNING                                │ │                                                             │ │  You are about to scan: example.com                         │ │  This is NOT a localhost or private IP address.             │ │                                                             │ │  Before proceeding, confirm:                                │ │  ☐ I have written authorization to test this target         │ │  ☐ I understand unauthorized testing is illegal             │ │  ☐ I accept full responsibility for this action             │ │                                                             │ │  [Cancel]                              [Proceed with Scan]  │ └─────────────────────────────────────────────────────────────┘ Forbidden Targets OpenSploit blocks scanning of certain targets: - Government domains (.gov, .mil) - Critical infrastructure - Known protected networks Audit Logging All actions are logged for accountability: Location: ~/.opensploit/audit.log Format: JSON Lines (machine-parseable) Contents: timestamp, session, action, target, result Approval Flow OpenSploit requests explicit approval before: - Scanning external/non-private IP addresses - Running privileged containers - Executing exploits - Modifying files on target systems - Downloading sensitiv",
+    "headings": [
+      "Authorization Requirements",
+      "Built-in Safeguards",
+      "Target Validation",
+      "Forbidden Targets",
+      "Audit Logging",
+      "Approval Flow",
+      "Safe Testing Targets",
+      "Local Labs",
+      "Online Labs (Authorized)",
+      "Bug Bounty Programs",
+      "Data Handling",
+      "Local-First Architecture",
+      "Credential Security",
+      "Container Isolation",
+      "Responsible Disclosure",
+      "Legal Disclaimer",
+      "Reporting Security Issues"
+    ]
+  },
+  {
+    "title": "Server",
+    "href": "/docs/server",
+    "content": "OpenSploit can run as a headless HTTP server, enabling programmatic access and integrations. Overview The server provides: - HTTP API - RESTful endpoints for all functionality - OpenAPI spec - Auto-generated documentation - Multi-client - Multiple connections simultaneously - Headless operation - Run without the TUI Starting the Server With TUI When you run opensploit, both the TUI and server start together. The server runs on a random port. Standalone Run the server without the TUI: opensploit serve With Options opensploit serve --port 4096 --hostname 0.0.0.0 Option   Description   Default -------- ------------- --------- --port   Server port   Random --hostname   Bind address   127.0.0.1 --cors   CORS origins (repeatable)   None --mdns   Enable mDNS discovery   false API Documentation View the OpenAPI 3.1 specification at: http://localhost:4096/doc Use this to: - Explore available endpoints - Generate clients in other languages - Understand request/response formats API Categories Sessions Endpoint   Method   Description ---------- -------- ------------- /sessions   GET   List all sessions /sessions   POST   Create new session /sessions/:id   GET   Get session details /sessions/:id   DELETE   Delete session /sessions/:id/messages   GET   Get session messages /sessions/:id/prompt   POST   Send a prompt Files Endpoint   Method   Description ---------- -------- ------------- /files/find   POST   Find files by pattern /files/read   POST   Read file content /files/search   POST   Search file contents Configuration Endpoint   Method   Description ---------- -------- ------------- /config   GET   Get current config /config/providers   GET   List providers /config/models   GET   List models Tools Endpoint   Method   Description ---------- -------- ------------- /tools   GET   List available tools /tools/:name   GET   Get tool details /mcp   GET   List MCP servers Example: cURL Create a session curl -X POST http://localhost:4096/sessions \\ -H \"Content-Type: application/json",
+    "headings": [
+      "Overview",
+      "Starting the Server",
+      "With TUI",
+      "Standalone",
+      "With Options",
+      "API Documentation",
+      "API Categories",
+      "Sessions",
+      "Files",
+      "Configuration",
+      "Tools",
+      "Example: cURL",
+      "Server-Sent Events",
+      "Authentication",
+      "CORS Configuration",
+      "Integration Examples",
+      "CI/CD Pipeline",
+      "Custom Dashboard",
+      "Security Considerations"
+    ]
+  },
+  {
+    "title": "Share",
+    "href": "/docs/share",
+    "content": "OpenSploit allows you to share sessions with team members for collaboration on security engagements. Overview Sharing creates a public URL for your conversation, enabling: - Team collaboration on findings - Knowledge sharing across engagements - Review of methodology and approach - Training and documentation Sharing Modes Configure sharing behavior in opensploit.json: { \"share\": \"manual\" } Mode   Behavior ------ ---------- \"manual\"   Share only when you run /share (default) \"auto\"   Every session is automatically shared \"disabled\"   Sharing is completely disabled Creating a Share Run the /share command: /share A unique URL is generated and copied to your clipboard: https://opensploit.ai/s/abc123xyz Share this URL with team members to give them read access. Removing a Share Stop sharing a session with /unshare: /unshare The public URL becomes invalid immediately. Privacy Considerations > Warning: Shared sessions are publicly accessible to anyone with the URL. Before sharing, review your session for: - Target information - IP addresses, hostnames, URLs - Credentials - Discovered passwords, API keys, tokens - Proprietary data - Client-specific information - Exploitation details - Sensitive vulnerability information Best Practices 1. Redact sensitive data before sharing 2. Use for authorized purposes only 3. Unshare when collaboration is complete 4. Disable sharing for sensitive engagements Disabling for Projects Disable sharing for sensitive projects: { \"share\": \"disabled\" } Or set globally in ~/.config/opensploit/config.json. Team Usage For team engagements: 1. One member shares the session 2. Others can view the shared URL 3. Discussion happens outside OpenSploit 4. Findings are consolidated manually > Note: Shared sessions are read-only. Team members cannot modify or continue the session. Self-Hosted Sharing For organizations requiring data sovereignty, sharing can be self-hosted. Contact us for enterprise deployment options. Audit Trail All share actions are logged",
+    "headings": [
+      "Overview",
+      "Sharing Modes",
+      "Creating a Share",
+      "Removing a Share",
+      "Privacy Considerations",
+      "Best Practices",
+      "Disabling for Projects",
+      "Team Usage",
+      "Self-Hosted Sharing",
+      "Audit Trail"
+    ]
+  },
+  {
+    "title": "Themes",
+    "href": "/docs/themes",
+    "content": "OpenSploit supports customizable color themes for the terminal interface. Terminal Requirements Themes work best with truecolor support (24-bit color). Verify your terminal supports it: echo $COLORTERM Expected output: truecolor or 24bit If not set, add to your shell profile: export COLORTERM=truecolor Built-in Themes OpenSploit includes several themes: Theme   Description ------- ------------- opensploit   Default theme with red accents system   Adapts to terminal background tokyonight   Tokyo Night color scheme catppuccin   Catppuccin color palette gruvbox   Gruvbox retro colors nord   Nord arctic colors everforest   Everforest green theme kanagawa   Kanagawa wave colors ayu   Ayu color scheme one-dark   Atom One Dark matrix   Green terminal aesthetic Selecting a Theme Via Command /themes Then select from the list. Via Keybind Press ctrl+x t to open the theme selector. Via Configuration Set in opensploit.json: { \"theme\": \"tokyonight\" } Custom Themes Create custom themes by placing JSON files in: - ~/.config/opensploit/themes/.json - User-wide themes - .opensploit/themes/.json - Project-specific themes Theme Structure { \"name\": \"my-theme\", \"colors\": { \"background\": \"0a0a0a\", \"foreground\": \"e0e0e0\", \"primary\": \"ff5555\", \"secondary\": \"50fa7b\", \"accent\": \"bd93f9\", \"error\": \"ff5555\", \"warning\": \"f1fa8c\", \"success\": \"50fa7b\", \"info\": \"8be9fd\", \"muted\": \"6272a4\", \"border\": \"44475a\" } } Color Formats Themes accept: - Hex colors: \"ffffff\" - ANSI values: 0 - 255 - Color references: \"primary\" - \"none\" for terminal defaults Definitions Use defs for reusable colors: { \"defs\": { \"red\": \"ff5555\", \"green\": \"50fa7b\" }, \"colors\": { \"error\": \"red\", \"success\": \"green\" } } Theme Hierarchy Themes are loaded in order (later overrides earlier): 1. Built-in themes 2. User config (~/.config/opensploit/themes/) 3. Project root (.opensploit/themes/) 4. Current directory Dark/Light Variants Create variants for different terminal backgrounds: { \"name\": \"my-theme\", \"colors\": { \"background\": { \"",
+    "headings": [
+      "Terminal Requirements",
+      "Built-in Themes",
+      "Selecting a Theme",
+      "Via Command",
+      "Via Keybind",
+      "Via Configuration",
+      "Custom Themes",
+      "Theme Structure",
+      "Color Formats",
+      "Definitions",
+      "Theme Hierarchy",
+      "Dark/Light Variants",
+      "Tips"
+    ]
+  },
+  {
+    "title": "Security Tools",
+    "href": "/docs/tools",
+    "content": "OpenSploit orchestrates 25+ security tools via the Model Context Protocol (MCP). Tools run in Docker containers and are downloaded on-demand when first used. How Tools Work 1. Tool Registry RAG - Agents discover tools by querying a semantic search system 2. On-Demand Download - Tool containers are pulled from the registry when needed 3. MCP Communication - OpenSploit communicates with tools via JSON-RPC over stdio 4. Container Isolation - Each tool runs in its own Docker container Tool Categories Reconnaissance Tool   Description ------ ------------- nmap   Port scanning, service detection, OS fingerprinting web-fingerprint   Web technology detection (CMS, frameworks, servers) whatweb   Web technology fingerprinting Enumeration Tool   Description ------ ------------- ffuf   Web fuzzing, directory bruteforcing gobuster   Directory and DNS bruteforcing nikto   Web server vulnerability scanning nuclei   Template-based vulnerability scanning wpscan   WordPress vulnerability scanning cve-lookup   CVE research via NVD API Exploitation Tool   Description ------ ------------- sqlmap   SQL injection testing and exploitation hydra   Password brute-forcing metasploit   Exploitation framework curl   HTTP requests, RCE injection ssh   Remote command execution netcat   Reverse shell listener payload   Binary compilation, reverse shells nosqlmap   NoSQL injection testing Post-Exploitation Tool   Description ------ ------------- privesc   Privilege escalation enumeration tunnel   SSH port forwarding, SOCKS proxy mysql   MySQL database queries mongodb   MongoDB client john   Password cracking Tool Selection Hierarchy OpenSploit prioritizes tools based on specificity: 1. Skills (Level 1) - Composite workflows that orchestrate multiple tools 2. Specialized Tools (Level 2) - Purpose-built tools for specific tasks 3. General-Purpose Tools (Level 3) - Flexible tools like curl, netcat For example, when testing for SQL injection, OpenSploit will prefer sqlmap over curl even though both can",
+    "headings": [
+      "How Tools Work",
+      "Tool Categories",
+      "Reconnaissance",
+      "Enumeration",
+      "Exploitation",
+      "Post-Exploitation",
+      "Tool Selection Hierarchy",
+      "Privileged Containers",
+      "Enabling/Disabling Tools",
+      "Tool Output Management"
+    ]
+  },
+  {
+    "title": "Troubleshooting",
+    "href": "/docs/troubleshooting",
+    "content": "Common issues and solutions when using OpenSploit. Logs Log files help diagnose issues: Location: - macOS/Linux: ~/.local/share/opensploit/log/ - Windows: %USERPROFILE%\\.local\\share\\opensploit\\log\\ OpenSploit keeps the 10 most recent log files with timestamp naming. Enable debug logging: opensploit --log-level DEBUG Print logs to console: opensploit --print-logs Storage Location Application data is stored at: - macOS/Linux: ~/.local/share/opensploit/ - Windows: %USERPROFILE%\\.local\\share\\opensploit\\ Contents: - Authentication data - Session history - Tool registry cache - Audit logs Common Issues OpenSploit Won't Start 1. Check logs for errors: bash opensploit --print-logs 2. Verify dependencies: bash docker --version node --version   or bun --version 3. Try upgrading: bash opensploit upgrade 4. Clear cache and retry: bash rm -rf ~/.cache/opensploit opensploit Authentication Failures 1. Re-authenticate via /connect command 2. Verify API key is valid and not expired 3. Check network connectivity to provider 4. Ensure correct model format (provider/model) Provider Not Found 1. Run opensploit models to list available models 2. Verify provider name and model format 3. Re-authenticate with /connect ProviderInitError 1. Follow the providers guide 2. Clear configuration: bash rm -rf ~/.local/share/opensploit 3. Re-authenticate API Call Errors Clear the cache to reinstall provider packages: rm -rf ~/.cache/opensploit Docker Issues Docker Not Running Error: Cannot connect to Docker daemon Start Docker Desktop or the Docker service: Linux sudo systemctl start docker macOS open -a Docker Container Timeout Increase timeout in configuration: { \"mcp\": { \"slow-tool\": { \"timeout\": 60000 } } } Image Pull Failures Check network connectivity and Docker Hub access: docker pull alpine If behind a proxy, configure Docker proxy settings. Permission Denied Add your user to the docker group: sudo usermod -aG docker $USER Log out and back in Terminal Issues Display Problems Ensure truecolor ",
+    "headings": [
+      "Logs",
+      "Storage Location",
+      "Common Issues",
+      "OpenSploit Won't Start",
+      "Authentication Failures",
+      "Provider Not Found",
+      "ProviderInitError",
+      "API Call Errors",
+      "Docker Issues",
+      "Docker Not Running",
+      "Container Timeout",
+      "Image Pull Failures",
+      "Permission Denied",
+      "Terminal Issues",
+      "Display Problems",
+      "Copy/Paste Not Working (Linux)",
+      "Keybinds Not Working",
+      "Network Issues",
+      "External Target Warnings",
+      "Tool Network Access",
+      "Firewall Blocking",
+      "Getting Help",
+      "Report Issues",
+      "Information to Include",
+      "Reset Everything"
+    ]
+  },
+  {
+    "title": "Terminal User Interface",
+    "href": "/docs/tui",
+    "content": "OpenSploit provides an interactive terminal interface for conducting security assessments. Launch it with opensploit or target a specific directory using opensploit /path/to/workspace. Overview The TUI is the primary interface for interacting with OpenSploit. It provides: - Conversation view - Chat with the AI agent about your targets - Tool execution display - Watch security tools run in real-time - Session management - Save and resume engagements - File browser - Reference and analyze files Launching Start OpenSploit in the current directory: opensploit Start in a specific workspace: opensploit /path/to/pentest/engagement Resume a previous session: opensploit --session <session-id> File References Reference files in your prompts using the @ symbol: Analyze the vulnerabilities in @nmapscan.xml The @ symbol triggers fuzzy file search, allowing you to quickly find and include file contents in your conversation. Shell Integration Execute shell commands by prefixing with !: !nmap -sV 10.10.10.1 The command output becomes part of the conversation, enabling follow-up analysis. Slash Commands The TUI supports slash commands for common actions: Command   Function   Keybind --------- ---------- --------- /connect   Configure provider API keys   — /compact   Summarize the session   ctrl+x c /details   Toggle tool execution visibility   ctrl+x d /editor   Compose in external editor   ctrl+x e /export   Export conversation to Markdown   ctrl+x x /help   Display help dialog   ctrl+x h /models   List available models   ctrl+x m /new   Start a new session   ctrl+x n /redo   Restore undone changes   ctrl+x r /sessions   Switch between sessions   ctrl+x l /themes   List available themes   ctrl+x t /undo   Revert last action   ctrl+x u Learn more about commands → Tool Execution Display When OpenSploit runs security tools, the TUI shows: - Tool name - Which tool is executing (nmap, sqlmap, etc.) - Parameters - Arguments passed to the tool - Progress - Real-time output from the tool -",
+    "headings": [
+      "Overview",
+      "Launching",
+      "File References",
+      "Shell Integration",
+      "Slash Commands",
+      "Tool Execution Display",
+      "Configuration",
+      "Editor Setup",
+      "Terminal Requirements"
+    ]
+  },
+  {
+    "title": "Zen",
+    "href": "/docs/zen",
+    "content": "OpenSploit Zen is a curated AI gateway providing tested and optimized models for security testing workflows. Overview Zen offers: - Curated models tested for security tool integration - Simplified billing with pay-as-you-go pricing - Unified API for multiple providers - Optimized configurations for penetration testing Getting Started 1. Visit opensploit.ai/zen to create an account 2. Add billing information 3. Generate an API key 4. Connect in OpenSploit: /connect Select \"OpenSploit Zen\" and enter your API key Available Models Zen provides access to models from multiple providers: Recommended for Security Testing Model   Best For   Input Price ------- ---------- ------------- Claude Opus 4.5   Complex exploitation   $15/M tokens Claude Sonnet 4   Balanced testing   $3/M tokens GPT-4o   General enumeration   $5/M tokens Claude Haiku 3.5   Fast reconnaissance   $0.25/M tokens All Available Models Access 20+ models including: - Anthropic (Claude family) - OpenAI (GPT family) - Google (Gemini family) - Open-weight models Configuration Set Zen as your default provider: { \"model\": \"opensploit/claude-sonnet-4\" } Model IDs follow the format opensploit/<model-id>. Pricing Zen uses pay-as-you-go pricing based on token consumption: - Input tokens: Prompts, tool outputs, context - Output tokens: Model responses - Cached reads: Reduced pricing for repeated content Your account automatically reloads when balance drops below $5 (configurable). Free Tier New accounts receive credits for initial testing. Some models may be free during beta periods. Privacy & Data Data Handling - All models hosted in US data centers - Most providers maintain zero-retention policies - No training on your data Provider Policies Different underlying providers have different retention policies: Provider   Retention ---------- ----------- Anthropic   30 days OpenAI   30 days Others   Zero retention For sensitive engagements, consider self-hosted options. Team Features Zen supports team workspaces: - Role-",
+    "headings": [
+      "Overview",
+      "Getting Started",
+      "Available Models",
+      "Recommended for Security Testing",
+      "All Available Models",
+      "Configuration",
+      "Pricing",
+      "Free Tier",
+      "Privacy & Data",
+      "Data Handling",
+      "Provider Policies",
+      "Team Features",
+      "Self-Hosted Option"
+    ]
+  }
+];

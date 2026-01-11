@@ -1,0 +1,167 @@
+# Commands
+
+OpenSploit supports slash commands for quick actions. Type `/` in the input to see available commands.
+
+---
+
+## Built-in Commands
+
+### Session Management
+
+| Command | Description |
+|---------|-------------|
+| `/new` | Start a new session |
+| `/sessions` | List and switch between sessions |
+| `/compact` | Summarize the current session to save context |
+| `/export` | Export conversation to Markdown |
+
+### Configuration
+
+| Command | Description |
+|---------|-------------|
+| `/connect` | Add or update provider API keys |
+| `/models` | List available models |
+| `/themes` | List and switch themes |
+| `/help` | Display help and keybinds |
+
+### Actions
+
+| Command | Description |
+|---------|-------------|
+| `/undo` | Revert the last message and any file changes |
+| `/redo` | Restore an undone action |
+| `/details` | Toggle verbose tool output |
+| `/editor` | Compose message in external editor |
+
+---
+
+## Custom Commands
+
+Create custom commands to automate common workflows. Define them in:
+
+- `.opensploit/command/*.md` - Project-specific commands
+- `~/.config/opensploit/command/*.md` - Global commands
+
+### Example: Quick Scan
+
+Create `.opensploit/command/quickscan.md`:
+
+```markdown
+---
+description: Run a quick port scan on a target
+args:
+  - name: target
+    description: IP address or hostname to scan
+---
+
+Run a quick TCP SYN scan on {{target}} focusing on common ports.
+Use nmap with service version detection enabled.
+```
+
+Usage:
+
+```
+/quickscan 10.10.10.1
+```
+
+### Example: Web Enum
+
+Create `.opensploit/command/webenum.md`:
+
+```markdown
+---
+description: Enumerate a web application
+args:
+  - name: url
+    description: Target URL to enumerate
+---
+
+Perform web enumeration on {{url}}:
+1. Fingerprint web technologies
+2. Discover directories and files
+3. Check for common vulnerabilities
+4. Report findings
+```
+
+Usage:
+
+```
+/webenum https://target.local
+```
+
+---
+
+## Command Format
+
+Custom command files support:
+
+### Front Matter
+
+```yaml
+---
+description: Short description shown in command list
+agent: security  # Optional: specific agent to use
+model: claude-3-5-sonnet  # Optional: specific model
+args:
+  - name: argname
+    description: Argument description
+    required: true  # Optional, default false
+---
+```
+
+### Body
+
+The command body is the prompt sent to the agent. Use `{{argname}}` to insert arguments.
+
+### Shell Commands
+
+Include shell command output:
+
+```markdown
+Current directory structure:
+{{!ls -la}}
+
+Analyze these files and proceed with the scan.
+```
+
+### File References
+
+Include file contents:
+
+```markdown
+Based on the scope document:
+{{@scope.txt}}
+
+Begin the assessment.
+```
+
+---
+
+## Command Arguments
+
+Commands can accept arguments:
+
+```
+/scan 10.10.10.1 --ports 1-1000
+```
+
+Define arguments in front matter:
+
+```yaml
+args:
+  - name: target
+    description: Target IP or hostname
+    required: true
+  - name: ports
+    description: Port range to scan
+    required: false
+```
+
+---
+
+## Tips
+
+- Commands appear in the TUI autocomplete after typing `/`
+- Use short, memorable names
+- Include clear descriptions for discoverability
+- Test commands with various inputs

@@ -1,0 +1,237 @@
+# Server
+
+OpenSploit can run as a headless HTTP server, enabling programmatic access and integrations.
+
+---
+
+## Overview
+
+The server provides:
+
+- **HTTP API** - RESTful endpoints for all functionality
+- **OpenAPI spec** - Auto-generated documentation
+- **Multi-client** - Multiple connections simultaneously
+- **Headless operation** - Run without the TUI
+
+---
+
+## Starting the Server
+
+### With TUI
+
+When you run `opensploit`, both the TUI and server start together. The server runs on a random port.
+
+### Standalone
+
+Run the server without the TUI:
+
+```bash
+opensploit serve
+```
+
+### With Options
+
+```bash
+opensploit serve --port 4096 --hostname 0.0.0.0
+```
+
+| Option | Description | Default |
+|--------|-------------|---------|
+| `--port` | Server port | Random |
+| `--hostname` | Bind address | 127.0.0.1 |
+| `--cors` | CORS origins (repeatable) | None |
+| `--mdns` | Enable mDNS discovery | false |
+
+---
+
+## API Documentation
+
+View the OpenAPI 3.1 specification at:
+
+```
+http://localhost:4096/doc
+```
+
+Use this to:
+
+- Explore available endpoints
+- Generate clients in other languages
+- Understand request/response formats
+
+---
+
+## API Categories
+
+### Sessions
+
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/sessions` | GET | List all sessions |
+| `/sessions` | POST | Create new session |
+| `/sessions/:id` | GET | Get session details |
+| `/sessions/:id` | DELETE | Delete session |
+| `/sessions/:id/messages` | GET | Get session messages |
+| `/sessions/:id/prompt` | POST | Send a prompt |
+
+### Files
+
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/files/find` | POST | Find files by pattern |
+| `/files/read` | POST | Read file content |
+| `/files/search` | POST | Search file contents |
+
+### Configuration
+
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/config` | GET | Get current config |
+| `/config/providers` | GET | List providers |
+| `/config/models` | GET | List models |
+
+### Tools
+
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/tools` | GET | List available tools |
+| `/tools/:name` | GET | Get tool details |
+| `/mcp` | GET | List MCP servers |
+
+---
+
+## Example: cURL
+
+```bash
+# Create a session
+curl -X POST http://localhost:4096/sessions \
+  -H "Content-Type: application/json" \
+  -d '{"name": "Test Session"}'
+
+# Send a prompt
+curl -X POST http://localhost:4096/sessions/SESSION_ID/prompt \
+  -H "Content-Type: application/json" \
+  -d '{"content": "Scan 10.10.10.1 for open ports"}'
+
+# Get messages
+curl http://localhost:4096/sessions/SESSION_ID/messages
+```
+
+---
+
+## Server-Sent Events
+
+Subscribe to real-time updates:
+
+```bash
+curl -N http://localhost:4096/events
+```
+
+Event types:
+
+| Event | Description |
+|-------|-------------|
+| `session.created` | New session started |
+| `message.created` | New message in session |
+| `tool.started` | Tool execution began |
+| `tool.completed` | Tool execution finished |
+| `error` | Error occurred |
+
+---
+
+## Authentication
+
+For exposed servers, configure authentication:
+
+```json
+{
+  "server": {
+    "auth": {
+      "type": "bearer",
+      "token": "${OPENSPLOIT_API_TOKEN}"
+    }
+  }
+}
+```
+
+Then include the token in requests:
+
+```bash
+curl -H "Authorization: Bearer YOUR_TOKEN" \
+  http://localhost:4096/sessions
+```
+
+---
+
+## CORS Configuration
+
+For browser access, enable CORS:
+
+```bash
+opensploit serve --cors http://localhost:3000 --cors https://app.example.com
+```
+
+Or in configuration:
+
+```json
+{
+  "server": {
+    "cors": [
+      "http://localhost:3000",
+      "https://app.example.com"
+    ]
+  }
+}
+```
+
+---
+
+## Integration Examples
+
+### CI/CD Pipeline
+
+```yaml
+# .github/workflows/security.yml
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Start OpenSploit
+        run: |
+          opensploit serve --port 4096 &
+          sleep 5
+      - name: Run Assessment
+        run: |
+          curl -X POST http://localhost:4096/sessions \
+            -d '{"name": "CI Scan"}' > session.json
+          # ... continue with API calls
+```
+
+### Custom Dashboard
+
+Build a web interface using the API:
+
+```typescript
+// Fetch sessions for display
+const sessions = await fetch("http://localhost:4096/sessions")
+  .then(r => r.json());
+
+// Subscribe to updates
+const events = new EventSource("http://localhost:4096/events");
+events.onmessage = (e) => {
+  const event = JSON.parse(e.data);
+  updateUI(event);
+};
+```
+
+---
+
+## Security Considerations
+
+When exposing the server:
+
+1. **Use authentication** - Never expose without auth
+2. **Bind to localhost** - Default behavior, change carefully
+3. **Use HTTPS** - Put behind a reverse proxy with TLS
+4. **Restrict CORS** - Only allow trusted origins
+5. **Monitor access** - Review audit logs regularly

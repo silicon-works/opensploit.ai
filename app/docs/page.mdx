@@ -93,6 +93,74 @@ OpenSploit will:
 
 ---
 
+## Practical Workflows
+
+### Reconnaissance
+
+Ask OpenSploit to scan a target:
+
+```
+Scan 192.168.1.0/24 for open ports and services
+```
+
+The agent will use nmap to discover hosts and services, presenting findings as it goes.
+
+### Web Application Testing
+
+Reference a target URL for web testing:
+
+```
+Test https://target.local for common web vulnerabilities
+```
+
+OpenSploit will enumerate directories, fingerprint technologies, and test for issues like SQL injection, XSS, and authentication bypasses.
+
+### Credential Testing
+
+Test discovered credentials:
+
+```
+Try these credentials against the SSH service on 10.10.10.5
+```
+
+The agent will use tools like Hydra for credential testing, always requesting confirmation first.
+
+### Reporting
+
+Generate a report at any point:
+
+```
+Generate a report of findings so far
+```
+
+OpenSploit compiles all discoveries, successful exploits, and recommendations into a structured report.
+
+---
+
+## File References
+
+Reference files in your prompts using the `@` symbol:
+
+```
+Analyze the scan results in @nmap_results.xml
+```
+
+OpenSploit will include the file contents in context and reason about them.
+
+---
+
+## Shell Commands
+
+Execute shell commands directly by prefixing with `!`:
+
+```
+!docker ps
+```
+
+The output is included in the conversation, allowing follow-up questions.
+
+---
+
 ## Key Concepts
 
 ### Phases

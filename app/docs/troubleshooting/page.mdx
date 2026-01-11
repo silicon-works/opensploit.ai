@@ -1,0 +1,271 @@
+# Troubleshooting
+
+Common issues and solutions when using OpenSploit.
+
+---
+
+## Logs
+
+Log files help diagnose issues:
+
+**Location:**
+- macOS/Linux: `~/.local/share/opensploit/log/`
+- Windows: `%USERPROFILE%\.local\share\opensploit\log\`
+
+OpenSploit keeps the 10 most recent log files with timestamp naming.
+
+**Enable debug logging:**
+
+```bash
+opensploit --log-level DEBUG
+```
+
+**Print logs to console:**
+
+```bash
+opensploit --print-logs
+```
+
+---
+
+## Storage Location
+
+Application data is stored at:
+
+- macOS/Linux: `~/.local/share/opensploit/`
+- Windows: `%USERPROFILE%\.local\share\opensploit\`
+
+Contents:
+- Authentication data
+- Session history
+- Tool registry cache
+- Audit logs
+
+---
+
+## Common Issues
+
+### OpenSploit Won't Start
+
+1. Check logs for errors:
+   ```bash
+   opensploit --print-logs
+   ```
+
+2. Verify dependencies:
+   ```bash
+   docker --version
+   node --version  # or bun --version
+   ```
+
+3. Try upgrading:
+   ```bash
+   opensploit upgrade
+   ```
+
+4. Clear cache and retry:
+   ```bash
+   rm -rf ~/.cache/opensploit
+   opensploit
+   ```
+
+### Authentication Failures
+
+1. Re-authenticate via `/connect` command
+2. Verify API key is valid and not expired
+3. Check network connectivity to provider
+4. Ensure correct model format (`provider/model`)
+
+### Provider Not Found
+
+1. Run `opensploit models` to list available models
+2. Verify provider name and model format
+3. Re-authenticate with `/connect`
+
+### ProviderInitError
+
+1. Follow the [providers guide](/docs/providers)
+2. Clear configuration:
+   ```bash
+   rm -rf ~/.local/share/opensploit
+   ```
+3. Re-authenticate
+
+### API Call Errors
+
+Clear the cache to reinstall provider packages:
+
+```bash
+rm -rf ~/.cache/opensploit
+```
+
+---
+
+## Docker Issues
+
+### Docker Not Running
+
+```
+Error: Cannot connect to Docker daemon
+```
+
+Start Docker Desktop or the Docker service:
+
+```bash
+# Linux
+sudo systemctl start docker
+
+# macOS
+open -a Docker
+```
+
+### Container Timeout
+
+Increase timeout in configuration:
+
+```json
+{
+  "mcp": {
+    "slow-tool": {
+      "timeout": 60000
+    }
+  }
+}
+```
+
+### Image Pull Failures
+
+Check network connectivity and Docker Hub access:
+
+```bash
+docker pull alpine
+```
+
+If behind a proxy, configure Docker proxy settings.
+
+### Permission Denied
+
+Add your user to the docker group:
+
+```bash
+sudo usermod -aG docker $USER
+# Log out and back in
+```
+
+---
+
+## Terminal Issues
+
+### Display Problems
+
+Ensure truecolor support:
+
+```bash
+echo $COLORTERM  # Should output: truecolor or 24bit
+```
+
+If not set:
+
+```bash
+export COLORTERM=truecolor
+```
+
+### Copy/Paste Not Working (Linux)
+
+Install clipboard utilities:
+
+**X11:**
+```bash
+sudo apt install xclip
+# or
+sudo apt install xsel
+```
+
+**Wayland:**
+```bash
+sudo apt install wl-clipboard
+```
+
+### Keybinds Not Working
+
+Some terminals intercept certain key combinations. Try:
+
+1. Check terminal settings for conflicting shortcuts
+2. Configure a different leader key in `opensploit.json`
+3. Use a recommended terminal (WezTerm, Alacritty, Kitty)
+
+---
+
+## Network Issues
+
+### External Target Warnings
+
+If you're testing authorized external targets and want to reduce prompts:
+
+```json
+{
+  "permission": {
+    "external_target": "allow"
+  }
+}
+```
+
+**Only do this if you have proper authorization.**
+
+### Tool Network Access
+
+Some tools need host network access:
+
+```json
+{
+  "mcp": {
+    "network-scanner": {
+      "network": "host"
+    }
+  }
+}
+```
+
+### Firewall Blocking
+
+Ensure your firewall allows:
+- Outbound HTTPS (443) for API calls
+- Docker network traffic
+- Tool-specific ports (varies by tool)
+
+---
+
+## Getting Help
+
+### Report Issues
+
+- GitHub: [github.com/silicon-works/opensploit/issues](https://github.com/silicon-works/opensploit/issues)
+
+### Information to Include
+
+When reporting issues, provide:
+
+1. OpenSploit version: `opensploit --version`
+2. OS and version
+3. Docker version: `docker --version`
+4. Relevant log output
+5. Steps to reproduce
+6. Configuration (redact sensitive data)
+
+---
+
+## Reset Everything
+
+If all else fails, reset to defaults:
+
+```bash
+# Remove all OpenSploit data
+rm -rf ~/.local/share/opensploit
+rm -rf ~/.config/opensploit
+rm -rf ~/.cache/opensploit
+
+# Reinstall
+curl -fsSL https://opensploit.ai/install | bash
+```
+
+**Warning:** This removes all sessions, settings, and cached data.

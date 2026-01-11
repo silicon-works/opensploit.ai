@@ -1,5 +1,4 @@
-import { Header } from "@/components/header";
-import { Footer } from "@/components/footer";
+import { DocsHeader } from "@/components/docs-header";
 import { DocsSidebar } from "@/components/docs-sidebar";
 
 export default function DocsLayout({
@@ -8,15 +7,14 @@ export default function DocsLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div data-page="opensploit">
-      <Header />
+    <div data-page="docs">
+      <DocsHeader />
       <div data-component="docs-layout">
         <DocsSidebar />
         <main data-component="docs-content">
           <article>{children}</article>
         </main>
       </div>
-      <Footer />
     </div>
   );
 }

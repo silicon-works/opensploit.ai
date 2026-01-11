@@ -1,0 +1,128 @@
+# Share
+
+OpenSploit allows you to share sessions with team members for collaboration on security engagements.
+
+---
+
+## Overview
+
+Sharing creates a public URL for your conversation, enabling:
+
+- Team collaboration on findings
+- Knowledge sharing across engagements
+- Review of methodology and approach
+- Training and documentation
+
+---
+
+## Sharing Modes
+
+Configure sharing behavior in `opensploit.json`:
+
+```json
+{
+  "share": "manual"
+}
+```
+
+| Mode | Behavior |
+|------|----------|
+| `"manual"` | Share only when you run `/share` (default) |
+| `"auto"` | Every session is automatically shared |
+| `"disabled"` | Sharing is completely disabled |
+
+---
+
+## Creating a Share
+
+Run the `/share` command:
+
+```
+/share
+```
+
+A unique URL is generated and copied to your clipboard:
+
+```
+https://opensploit.ai/s/abc123xyz
+```
+
+Share this URL with team members to give them read access.
+
+---
+
+## Removing a Share
+
+Stop sharing a session with `/unshare`:
+
+```
+/unshare
+```
+
+The public URL becomes invalid immediately.
+
+---
+
+## Privacy Considerations
+
+> **Warning:** Shared sessions are publicly accessible to anyone with the URL.
+
+Before sharing, review your session for:
+
+- **Target information** - IP addresses, hostnames, URLs
+- **Credentials** - Discovered passwords, API keys, tokens
+- **Proprietary data** - Client-specific information
+- **Exploitation details** - Sensitive vulnerability information
+
+### Best Practices
+
+1. **Redact sensitive data** before sharing
+2. **Use for authorized purposes only**
+3. **Unshare when collaboration is complete**
+4. **Disable sharing for sensitive engagements**
+
+---
+
+## Disabling for Projects
+
+Disable sharing for sensitive projects:
+
+```json
+{
+  "share": "disabled"
+}
+```
+
+Or set globally in `~/.config/opensploit/config.json`.
+
+---
+
+## Team Usage
+
+For team engagements:
+
+1. One member shares the session
+2. Others can view the shared URL
+3. Discussion happens outside OpenSploit
+4. Findings are consolidated manually
+
+> Note: Shared sessions are read-only. Team members cannot modify or continue the session.
+
+---
+
+## Self-Hosted Sharing
+
+For organizations requiring data sovereignty, sharing can be self-hosted. Contact us for enterprise deployment options.
+
+---
+
+## Audit Trail
+
+All share actions are logged:
+
+```
+Location: ~/.opensploit/audit.log
+Events: share_created, share_accessed, share_removed
+```
+
+Review the audit log to track who shared what and when.

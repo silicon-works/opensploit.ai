@@ -1,0 +1,230 @@
+# Custom Tools
+
+Extend OpenSploit by creating custom tools that the AI agent can call during engagements.
+
+---
+
+## Overview
+
+Custom tools allow you to:
+
+- Integrate proprietary security scripts
+- Add tools not in the standard registry
+- Create workflow automations
+- Wrap existing command-line tools
+
+---
+
+## Creating Tools
+
+### File Location
+
+Place tool files in:
+
+- `.opensploit/tool/` - Project-specific tools
+- `~/.config/opensploit/tool/` - Global tools
+
+### File Format
+
+Tools are defined in TypeScript or JavaScript:
+
+```typescript
+// .opensploit/tool/portscan.ts
+import { tool } from "opensploit";
+
+export default tool({
+  name: "portscan",
+  description: "Quick TCP port scan on a target",
+  schema: tool.schema({
+    target: tool.string().describe("IP address or hostname"),
+    ports: tool.string().optional().describe("Port range (default: 1-1000)"),
+  }),
+  async execute({ target, ports = "1-1000" }, context) {
+    const result = await Bun.$`nmap -p ${ports} ${target}`.text();
+    return { output: result };
+  },
+});
+```
+
+---
+
+## Tool Structure
+
+### Name
+
+The filename becomes the tool name. Multiple exports create names like `<filename>_<exportname>`.
+
+### Description
+
+Clear description helps the AI understand when to use the tool:
+
+```typescript
+description: "Scan for open ports using TCP SYN scan"
+```
+
+### Schema
+
+Define parameters using the schema helper (Zod-based):
+
+```typescript
+schema: tool.schema({
+  target: tool.string().describe("Target IP or hostname"),
+  aggressive: tool.boolean().optional().describe("Enable aggressive scan"),
+  timeout: tool.number().optional().describe("Timeout in seconds"),
+})
+```
+
+### Execute Function
+
+The function that runs when the tool is called:
+
+```typescript
+async execute(args, context) {
+  // args contains the validated parameters
+  // context contains session information
+  return { output: "result" };
+}
+```
+
+---
+
+## Context Object
+
+The execute function receives context:
+
+```typescript
+interface Context {
+  agent: string;      // Current agent name
+  sessionID: string;  // Session identifier
+  messageID: string;  // Message identifier
+  workdir: string;    // Working directory
+}
+```
+
+Use context for logging or conditional behavior:
+
+```typescript
+async execute(args, context) {
+  console.log(`Running in session: ${context.sessionID}`);
+  // ...
+}
+```
+
+---
+
+## Calling External Scripts
+
+Wrap scripts in any language:
+
+```typescript
+// .opensploit/tool/custom-scanner.ts
+import { tool } from "opensploit";
+
+export default tool({
+  name: "custom-scanner",
+  description: "Run custom Python vulnerability scanner",
+  schema: tool.schema({
+    target: tool.string().describe("Target URL"),
+  }),
+  async execute({ target }) {
+    const result = await Bun.$`python3 scripts/scanner.py ${target}`.text();
+    return { output: result };
+  },
+});
+```
+
+---
+
+## Docker Integration
+
+Run tools in containers for isolation:
+
+```typescript
+// .opensploit/tool/nuclei-custom.ts
+import { tool } from "opensploit";
+
+export default tool({
+  name: "nuclei-custom",
+  description: "Run nuclei with custom templates",
+  schema: tool.schema({
+    target: tool.string().describe("Target URL"),
+    template: tool.string().describe("Template path"),
+  }),
+  async execute({ target, template }) {
+    const result = await Bun.$`
+      docker run --rm \
+        -v ${template}:/templates/custom.yaml:ro \
+        projectdiscovery/nuclei \
+        -u ${target} \
+        -t /templates/custom.yaml
+    `.text();
+    return { output: result };
+  },
+});
+```
+
+---
+
+## Error Handling
+
+Return errors gracefully:
+
+```typescript
+async execute(args) {
+  try {
+    const result = await runScan(args);
+    return { output: result };
+  } catch (error) {
+    return {
+      error: true,
+      message: `Scan failed: ${error.message}`
+    };
+  }
+}
+```
+
+---
+
+## Multiple Tools Per File
+
+Export multiple tools from one file:
+
+```typescript
+// .opensploit/tool/network.ts
+import { tool } from "opensploit";
+
+export const ping = tool({
+  name: "ping",
+  description: "Ping a host",
+  schema: tool.schema({
+    host: tool.string(),
+  }),
+  async execute({ host }) {
+    return { output: await Bun.$`ping -c 4 ${host}`.text() };
+  },
+});
+
+export const traceroute = tool({
+  name: "traceroute",
+  description: "Trace route to host",
+  schema: tool.schema({
+    host: tool.string(),
+  }),
+  async execute({ host }) {
+    return { output: await Bun.$`traceroute ${host}`.text() };
+  },
+});
+```
+
+Creates tools: `network_ping` and `network_traceroute`.
+
+---
+
+## Best Practices
+
+1. **Clear descriptions** - Help the AI understand when to use your tool
+2. **Validate inputs** - Use schema to enforce parameter types
+3. **Handle errors** - Return meaningful error messages
+4. **Timeout handling** - Set timeouts for long-running operations
+5. **Security** - Sanitize inputs, especially for shell commands
+6. **Logging** - Log important actions for audit purposes

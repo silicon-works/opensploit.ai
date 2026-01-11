@@ -1,0 +1,139 @@
+# Rules
+
+OpenSploit allows customization through an `AGENTS.md` file containing custom instructions that guide the AI's behavior for your specific engagement context.
+
+---
+
+## Overview
+
+Rules help you:
+
+- Define engagement scope and boundaries
+- Set methodology preferences
+- Specify tool configurations
+- Establish reporting requirements
+- Share context across sessions
+
+---
+
+## Setup
+
+Generate a project-specific `AGENTS.md` file using the `/init` command:
+
+```
+/init
+```
+
+OpenSploit analyzes your workspace and creates an initial configuration. Commit this file to version control for team consistency.
+
+---
+
+## File Locations
+
+### Project-Level
+
+Place `AGENTS.md` in the project root. Rules apply only within that directory and subdirectories.
+
+```
+/pentest-engagement/
+├── AGENTS.md          # Rules for this engagement
+├── scope.txt
+└── findings/
+```
+
+### Global-Level
+
+Place rules at `~/.config/opensploit/AGENTS.md` to apply them across all sessions. Useful for personal preferences and default configurations.
+
+---
+
+## Precedence
+
+OpenSploit searches for rules in this order:
+
+1. Local files by traversing up from the current directory
+2. Global file at `~/.config/opensploit/AGENTS.md`
+
+When both exist, they combine together.
+
+---
+
+## Example AGENTS.md
+
+```markdown
+# Engagement Rules
+
+## Scope
+- Target: 10.10.10.0/24
+- Authorized systems only
+- No denial of service testing
+- Web applications on ports 80, 443, 8080
+
+## Methodology
+- Follow OWASP Testing Guide
+- Prioritize critical findings
+- Document all exploitation attempts
+
+## Tools
+- Prefer nmap for port scanning
+- Use nuclei for vulnerability scanning
+- SQLMap for SQL injection testing
+
+## Reporting
+- Generate findings in markdown format
+- Include severity ratings (Critical, High, Medium, Low)
+- Capture screenshots where possible
+```
+
+---
+
+## Advanced Configuration
+
+Specify additional rule files in `opensploit.json`:
+
+```json
+{
+  "instructions": [
+    "SCOPE.md",
+    "docs/methodology.md"
+  ]
+}
+```
+
+This supports glob patterns for complex projects:
+
+```json
+{
+  "instructions": [
+    "engagements/*/rules.md"
+  ]
+}
+```
+
+---
+
+## External File References
+
+Reference external files in your rules using the `@` syntax:
+
+```markdown
+# Engagement Rules
+
+Refer to the authorized scope:
+@scope.txt
+
+Follow the client's security policy:
+@docs/security-policy.pdf
+```
+
+OpenSploit loads referenced files on-demand when relevant to the current task.
+
+---
+
+## Best Practices
+
+1. **Keep rules focused** - Specific rules work better than vague guidelines
+2. **Update regularly** - Modify rules as the engagement progresses
+3. **Version control** - Track changes to rules over time
+4. **Team alignment** - Ensure all team members use the same rules
+5. **Scope clarity** - Explicitly define what's in and out of scope

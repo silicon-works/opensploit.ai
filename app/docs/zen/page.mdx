@@ -1,0 +1,127 @@
+# Zen
+
+OpenSploit Zen is a curated AI gateway providing tested and optimized models for security testing workflows.
+
+---
+
+## Overview
+
+Zen offers:
+
+- **Curated models** tested for security tool integration
+- **Simplified billing** with pay-as-you-go pricing
+- **Unified API** for multiple providers
+- **Optimized configurations** for penetration testing
+
+---
+
+## Getting Started
+
+1. Visit [opensploit.ai/zen](https://opensploit.ai/zen) to create an account
+2. Add billing information
+3. Generate an API key
+4. Connect in OpenSploit:
+   ```
+   /connect
+   ```
+   Select "OpenSploit Zen" and enter your API key
+
+---
+
+## Available Models
+
+Zen provides access to models from multiple providers:
+
+### Recommended for Security Testing
+
+| Model | Best For | Input Price |
+|-------|----------|-------------|
+| Claude Opus 4.5 | Complex exploitation | $15/M tokens |
+| Claude Sonnet 4 | Balanced testing | $3/M tokens |
+| GPT-4o | General enumeration | $5/M tokens |
+| Claude Haiku 3.5 | Fast reconnaissance | $0.25/M tokens |
+
+### All Available Models
+
+Access 20+ models including:
+
+- Anthropic (Claude family)
+- OpenAI (GPT family)
+- Google (Gemini family)
+- Open-weight models
+
+---
+
+## Configuration
+
+Set Zen as your default provider:
+
+```json
+{
+  "model": "opensploit/claude-sonnet-4"
+}
+```
+
+Model IDs follow the format `opensploit/<model-id>`.
+
+---
+
+## Pricing
+
+Zen uses pay-as-you-go pricing based on token consumption:
+
+- **Input tokens**: Prompts, tool outputs, context
+- **Output tokens**: Model responses
+- **Cached reads**: Reduced pricing for repeated content
+
+Your account automatically reloads when balance drops below $5 (configurable).
+
+### Free Tier
+
+New accounts receive credits for initial testing. Some models may be free during beta periods.
+
+---
+
+## Privacy & Data
+
+### Data Handling
+
+- All models hosted in US data centers
+- Most providers maintain zero-retention policies
+- No training on your data
+
+### Provider Policies
+
+Different underlying providers have different retention policies:
+
+| Provider | Retention |
+|----------|-----------|
+| Anthropic | 30 days |
+| OpenAI | 30 days |
+| Others | Zero retention |
+
+For sensitive engagements, consider self-hosted options.
+
+---
+
+## Team Features
+
+Zen supports team workspaces:
+
+- **Role-based access** - Admin and Member roles
+- **Spending limits** - Per-user budget controls
+- **Model controls** - Enable/disable models per workspace
+- **Bring your own key** - Use existing provider keys
+
+---
+
+## Self-Hosted Option
+
+For organizations requiring full data control, Zen can be self-hosted. This provides:
+
+- Complete data sovereignty
+- Custom model deployments
+- Integration with existing infrastructure
+- Compliance with security policies
+
+Contact us for enterprise deployment options.

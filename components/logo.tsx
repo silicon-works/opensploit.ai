@@ -2,9 +2,9 @@ export function LogoLight() {
   return (
     <svg
       data-slot="logo-light"
-      width="120"
-      height="21"
-      viewBox="0 0 278 50"
+      width="250"
+      height="36"
+      viewBox="0 6 279 30"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
     >
@@ -70,9 +70,9 @@ export function LogoDark() {
   return (
     <svg
       data-slot="logo-dark"
-      width="120"
-      height="21"
-      viewBox="0 0 278 50"
+      width="250"
+      height="36"
+      viewBox="0 6 279 30"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
     >

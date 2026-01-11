@@ -1,0 +1,151 @@
+# Terminal User Interface
+
+OpenSploit provides an interactive terminal interface for conducting security assessments. Launch it with `opensploit` or target a specific directory using `opensploit /path/to/workspace`.
+
+---
+
+## Overview
+
+The TUI is the primary interface for interacting with OpenSploit. It provides:
+
+- **Conversation view** - Chat with the AI agent about your targets
+- **Tool execution display** - Watch security tools run in real-time
+- **Session management** - Save and resume engagements
+- **File browser** - Reference and analyze files
+
+---
+
+## Launching
+
+Start OpenSploit in the current directory:
+
+```bash
+opensploit
+```
+
+Start in a specific workspace:
+
+```bash
+opensploit /path/to/pentest/engagement
+```
+
+Resume a previous session:
+
+```bash
+opensploit --session <session-id>
+```
+
+---
+
+## File References
+
+Reference files in your prompts using the `@` symbol:
+
+```
+Analyze the vulnerabilities in @nmap_scan.xml
+```
+
+The `@` symbol triggers fuzzy file search, allowing you to quickly find and include file contents in your conversation.
+
+---
+
+## Shell Integration
+
+Execute shell commands by prefixing with `!`:
+
+```
+!nmap -sV 10.10.10.1
+```
+
+The command output becomes part of the conversation, enabling follow-up analysis.
+
+---
+
+## Slash Commands
+
+The TUI supports slash commands for common actions:
+
+| Command | Function | Keybind |
+|---------|----------|---------|
+| `/connect` | Configure provider API keys | — |
+| `/compact` | Summarize the session | `ctrl+x c` |
+| `/details` | Toggle tool execution visibility | `ctrl+x d` |
+| `/editor` | Compose in external editor | `ctrl+x e` |
+| `/export` | Export conversation to Markdown | `ctrl+x x` |
+| `/help` | Display help dialog | `ctrl+x h` |
+| `/models` | List available models | `ctrl+x m` |
+| `/new` | Start a new session | `ctrl+x n` |
+| `/redo` | Restore undone changes | `ctrl+x r` |
+| `/sessions` | Switch between sessions | `ctrl+x l` |
+| `/themes` | List available themes | `ctrl+x t` |
+| `/undo` | Revert last action | `ctrl+x u` |
+
+[Learn more about commands →](/docs/commands)
+
+---
+
+## Tool Execution Display
+
+When OpenSploit runs security tools, the TUI shows:
+
+- **Tool name** - Which tool is executing (nmap, sqlmap, etc.)
+- **Parameters** - Arguments passed to the tool
+- **Progress** - Real-time output from the tool
+- **Results** - Parsed findings and recommendations
+
+Toggle detailed output with `/details` or `ctrl+x d`.
+
+---
+
+## Configuration
+
+Configure TUI behavior in `opensploit.json`:
+
+```json
+{
+  "tui": {
+    "scroll_speed": 3,
+    "scroll_acceleration": {
+      "enabled": true
+    }
+  }
+}
+```
+
+**Options:**
+
+| Option | Description | Default |
+|--------|-------------|---------|
+| `scroll_speed` | Lines to scroll per input | `3` |
+| `scroll_acceleration.enabled` | Enable smooth scrolling | `true` |
+
+---
+
+## Editor Setup
+
+The `/editor` and `/export` commands use the `EDITOR` environment variable:
+
+```bash
+# VS Code
+export EDITOR="code --wait"
+
+# Vim
+export EDITOR="vim"
+
+# Nano
+export EDITOR="nano"
+```
+
+On Windows, set this via System Properties or your PowerShell profile.
+
+---
+
+## Terminal Requirements
+
+For the best experience:
+
+- **Truecolor support** - Required for themes. Verify with `echo $COLORTERM`
+- **Unicode support** - For proper icon and border rendering
+- **Minimum 80x24** - Recommended terminal size
+
+Recommended terminals: WezTerm, Alacritty, Ghostty, Kitty, iTerm2.

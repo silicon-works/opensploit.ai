@@ -1,14 +1,15 @@
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
 import { InstallTabs } from "@/components/install-tabs";
+import { Legal } from "@/components/legal";
 import { config, features } from "@/lib/config";
 
 export default function Home() {
   return (
-    <div data-page="opensploit">
-      <Header />
-
+    <main data-page="opensploit">
       <div data-component="container">
+        <Header />
+
         {/* Hero Section */}
         <section data-component="hero">
           <div data-slot="content">
@@ -62,6 +63,8 @@ export default function Home() {
 
         <Footer />
       </div>
-    </div>
+
+      <Legal />
+    </main>
   );
 }

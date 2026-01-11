@@ -1,0 +1,256 @@
+# MCP Servers
+
+OpenSploit integrates security tools through the Model Context Protocol (MCP). Tools run as MCP servers in Docker containers, providing isolation and consistency.
+
+---
+
+## Overview
+
+MCP servers extend OpenSploit's capabilities by providing:
+
+- **Security tools** - nmap, sqlmap, ffuf, hydra, etc.
+- **Isolated execution** - Tools run in containers
+- **Consistent environments** - Same tool versions across systems
+- **On-demand loading** - Tools download when first used
+
+---
+
+## How It Works
+
+1. You request an action (e.g., "scan this target")
+2. OpenSploit queries the Tool Registry to find appropriate tools
+3. The MCP server for that tool starts in a Docker container
+4. The agent executes the tool via MCP protocol
+5. Results are returned and analyzed
+
+---
+
+## Tool Registry
+
+OpenSploit discovers tools via the Tool Registry, a RAG-based system that matches your requests to available tools.
+
+The registry is cached locally at `~/.opensploit/registry.yaml` and updated from opensploit.ai.
+
+### Registry Search
+
+When you describe a task, OpenSploit searches the registry using:
+
+- **Semantic similarity** (40%) - Natural language matching
+- **Selection level** (40%) - Tool specificity ranking
+- **Phase match** (20%) - Current penetration testing phase
+
+---
+
+## Configuration
+
+Configure MCP servers in `opensploit.json`:
+
+```json
+{
+  "mcp": {
+    "nmap": {
+      "enabled": true
+    },
+    "sqlmap": {
+      "enabled": true
+    },
+    "metasploit": {
+      "enabled": false
+    }
+  }
+}
+```
+
+### Enable/Disable Tools
+
+Toggle tools globally:
+
+```json
+{
+  "mcp": {
+    "hydra": {
+      "enabled": false
+    }
+  }
+}
+```
+
+### Custom Servers
+
+Add custom MCP servers:
+
+```json
+{
+  "mcp": {
+    "my-tool": {
+      "type": "local",
+      "command": ["docker", "run", "-i", "my-tool-image"],
+      "enabled": true
+    }
+  }
+}
+```
+
+---
+
+## Local vs Remote Servers
+
+### Local Servers
+
+Run on your machine via Docker:
+
+```json
+{
+  "mcp": {
+    "custom-scanner": {
+      "type": "local",
+      "command": ["docker", "run", "-i", "custom-scanner:latest"],
+      "timeout": 10000
+    }
+  }
+}
+```
+
+### Remote Servers
+
+Connect to remote MCP endpoints:
+
+```json
+{
+  "mcp": {
+    "cloud-tool": {
+      "type": "remote",
+      "url": "https://mcp.example.com/tool",
+      "headers": {
+        "Authorization": "Bearer ${TOOL_API_KEY}"
+      }
+    }
+  }
+}
+```
+
+---
+
+## Authentication
+
+For remote servers requiring OAuth:
+
+```bash
+# Authenticate manually
+opensploit mcp auth server-name
+
+# List all servers
+opensploit mcp list
+
+# Remove credentials
+opensploit mcp logout server-name
+```
+
+Disable OAuth for API key servers:
+
+```json
+{
+  "mcp": {
+    "api-tool": {
+      "type": "remote",
+      "url": "https://api.example.com",
+      "oauth": false,
+      "headers": {
+        "X-API-Key": "${API_KEY}"
+      }
+    }
+  }
+}
+```
+
+---
+
+## Tool Permissions
+
+Control which agents can use which tools:
+
+```json
+{
+  "mcp": {
+    "metasploit": {
+      "enabled": false
+    }
+  },
+  "agents": {
+    "exploit": {
+      "mcp": {
+        "metasploit": {
+          "enabled": true
+        }
+      }
+    }
+  }
+}
+```
+
+Use glob patterns for bulk configuration:
+
+```json
+{
+  "mcp": {
+    "*_scanner": {
+      "enabled": true
+    }
+  }
+}
+```
+
+---
+
+## Container Security
+
+MCP tool containers run with:
+
+- **No Docker socket access** - Cannot control Docker
+- **Minimal capabilities** - Only necessary permissions
+- **Read-only filesystem** - Where possible
+- **Network isolation** - Controlled network access
+
+For tools requiring elevated permissions (e.g., raw sockets), OpenSploit prompts for approval.
+
+---
+
+## Available Tools
+
+OpenSploit includes 25+ security tools. See the [Tools documentation](/docs/tools) for the complete list.
+
+---
+
+## Troubleshooting
+
+### Tool Not Found
+
+Ensure Docker is running and the tool is enabled in configuration.
+
+### Container Timeout
+
+Increase timeout in configuration:
+
+```json
+{
+  "mcp": {
+    "slow-tool": {
+      "timeout": 30000
+    }
+  }
+}
+```
+
+### Network Issues
+
+Some tools require host network access. Enable with approval:
+
+```json
+{
+  "mcp": {
+    "network-tool": {
+      "network": "host"
+    }
+  }
+}
+```

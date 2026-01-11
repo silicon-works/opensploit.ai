@@ -23,11 +23,11 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   metadataBase: new URL("https://opensploit.ai"),
   title: {
-    default: "OpenSploit - The Open Source Offensive Security Agent",
+    default: "OpenSploit - Autonomous Penetration Testing Platform",
     template: "%s | OpenSploit",
   },
   description:
-    "AI-powered autonomous penetration testing. Orchestrate 25+ security tools with intelligent automation. Local-first, privacy-focused, and open source.",
+    "AI-powered penetration testing that orchestrates 25+ security tools. Local-first architecture for privacy. Open source and free.",
   keywords: [
     "penetration testing",
     "pentest",
@@ -56,15 +56,15 @@ export const metadata: Metadata = {
     locale: "en_US",
     url: "https://opensploit.ai",
     siteName: "OpenSploit",
-    title: "OpenSploit - The Open Source Offensive Security Agent",
+    title: "OpenSploit - Autonomous Penetration Testing Platform",
     description:
-      "AI-powered autonomous penetration testing. Orchestrate 25+ security tools with intelligent automation.",
+      "AI-powered penetration testing that orchestrates 25+ security tools. Local-first architecture for privacy.",
   },
   twitter: {
     card: "summary_large_image",
-    title: "OpenSploit - The Open Source Offensive Security Agent",
+    title: "OpenSploit - Autonomous Penetration Testing Platform",
     description:
-      "AI-powered autonomous penetration testing. Orchestrate 25+ security tools with intelligent automation.",
+      "AI-powered penetration testing that orchestrates 25+ security tools. Local-first architecture for privacy.",
   },
   robots: {
     index: true,
@@ -91,7 +91,7 @@ const jsonLd = {
   applicationCategory: "SecurityApplication",
   operatingSystem: "Linux, macOS, Windows",
   description:
-    "AI-powered autonomous penetration testing agent that orchestrates 25+ security tools with intelligent automation.",
+    "Local-first autonomous penetration testing platform. AI-powered security testing that orchestrates 25+ tools via MCP containers.",
   url: "https://opensploit.ai",
   downloadUrl: "https://opensploit.ai/download",
   softwareVersion: "0.1.0",
@@ -106,12 +106,13 @@ const jsonLd = {
     priceCurrency: "USD",
   },
   featureList: [
-    "AI-powered penetration testing",
-    "25+ security tools orchestration",
+    "Autonomous penetration testing",
+    "25+ security tools via MCP",
     "Local-first architecture",
     "75+ LLM provider support",
-    "Phase-based methodology",
-    "Automated reporting",
+    "Phase-based methodology (Recon, Enum, Exploit, Post-Exploit, Report)",
+    "On-demand tool containers",
+    "Tool Registry RAG for intelligent tool selection",
   ],
 };
 

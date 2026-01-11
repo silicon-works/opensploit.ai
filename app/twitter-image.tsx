@@ -79,7 +79,7 @@ export default async function Image() {
             letterSpacing: "-0.02em",
           }}
         >
-          The open source offensive security agent
+          Autonomous penetration testing, powered by AI
         </div>
 
         {/* Features */}

@@ -1,127 +1,323 @@
 # CLI Reference
 
-OpenSploit provides both an interactive TUI and command-line options for automation.
+OpenSploit provides both an interactive TUI and command-line options for automation and scripting.
 
 ---
 
-## Basic Usage
+## Overview
 
-Start the interactive TUI:
+When run without arguments, OpenSploit launches the TUI. For non-interactive use, pass commands directly.
+
 ```bash
-opensploit
+opensploit              # Start TUI
+opensploit run "..."    # Run non-interactive
+opensploit serve        # Start API server
 ```
 
-Run a single command:
+---
+
+## Core Commands
+
+### tui
+
+Start the terminal user interface.
+
 ```bash
-opensploit run "Scan 10.10.10.1 for open ports"
+opensploit tui [directory]
+```
+
+| Flag | Description |
+|------|-------------|
+| `--continue`, `-c` | Resume last session |
+| `--session`, `-s` | Resume specific session |
+| `--prompt` | Start with initial prompt |
+| `--model`, `-m` | Use specific model |
+| `--agent` | Use specific agent |
+| `--port` | Backend server port |
+| `--hostname` | Backend server hostname |
+
+### run
+
+Run OpenSploit non-interactively with a prompt.
+
+```bash
+opensploit run "<prompt>"
+opensploit run --file targets.txt "Scan all targets"
+```
+
+| Flag | Description |
+|------|-------------|
+| `--command` | Execute as shell command |
+| `--continue`, `-c` | Continue last session |
+| `--session`, `-s` | Continue specific session |
+| `--share` | Share session when complete |
+| `--model`, `-m` | Use specific model |
+| `--agent` | Use specific agent |
+| `--file`, `-f` | Include file content |
+| `--format` | Output format (text, json) |
+| `--title` | Session title |
+| `--attach` | Attach to running server |
+| `--port` | Server port |
+
+<Tip>
+Use `--format json` for machine-parseable output in CI/CD pipelines.
+</Tip>
+
+### serve
+
+Start a headless HTTP server for API access.
+
+```bash
+opensploit serve
+```
+
+| Flag | Description |
+|------|-------------|
+| `--port` | Server port (default: 9321) |
+| `--hostname` | Server hostname |
+| `--mdns` | Enable mDNS discovery |
+| `--cors` | CORS allowed origins |
+
+### web
+
+Start headless server with web interface.
+
+```bash
+opensploit web
+```
+
+| Flag | Description |
+|------|-------------|
+| `--port` | Server port |
+| `--hostname` | Server hostname |
+| `--mdns` | Enable mDNS discovery |
+| `--cors` | CORS allowed origins |
+
+### attach
+
+Connect TUI to a running backend server.
+
+```bash
+opensploit attach
+```
+
+| Flag | Description |
+|------|-------------|
+| `--dir` | Working directory |
+| `--session`, `-s` | Session to resume |
+
+---
+
+## Agent Commands
+
+### agent create
+
+Create a new agent with custom configuration.
+
+```bash
+opensploit agent create
+```
+
+### agent list
+
+Display all available agents.
+
+```bash
+opensploit agent list
 ```
 
 ---
 
-## Commands
+## Authentication
 
-### Core Commands
+### auth login
 
-| Command | Description |
-|---------|-------------|
-| `opensploit` | Start interactive TUI |
-| `opensploit run "<prompt>"` | Execute a single prompt |
-| `opensploit auth login` | Configure LLM provider credentials |
-| `opensploit sessions` | List previous sessions |
-| `opensploit resume <id>` | Resume a previous session |
+Configure API keys for providers.
 
-### Tool Management
+```bash
+opensploit auth login
+```
 
-| Command | Description |
-|---------|-------------|
-| `opensploit tools` | List available security tools |
-| `opensploit tools pull <name>` | Pre-download a tool container |
-| `opensploit cleanup` | Remove unused Docker images |
-| `opensploit update` | Update registry and check for updates |
+### auth list
 
-### Reporting
+Show authenticated providers.
 
-| Command | Description |
-|---------|-------------|
-| `opensploit report <session-id>` | Generate report for session |
-| `opensploit report --format html` | Specify output format |
+```bash
+opensploit auth list
+opensploit auth ls
+```
 
-### System
+### auth logout
 
-| Command | Description |
-|---------|-------------|
-| `opensploit version` | Display version information |
-| `opensploit doctor` | Check system requirements |
+Clear provider credentials.
+
+```bash
+opensploit auth logout [provider]
+```
 
 ---
 
-## Options
+## Model Commands
 
-### Global Options
+### models
 
-| Option | Description |
-|--------|-------------|
-| `--config <path>` | Use custom config file |
-| `--model <model>` | Override default model |
-| `--agent <name>` | Use specific agent |
-| `--verbose` | Enable verbose output |
+List available models.
 
-### Run Options
+```bash
+opensploit models
+opensploit models anthropic
+```
 
-| Option | Description |
-|--------|-------------|
-| `--yes` | Auto-approve all prompts |
-| `--no-tools` | Disable tool execution |
-| `--output <file>` | Write output to file |
+| Flag | Description |
+|------|-------------|
+| `--refresh` | Refresh model list |
+| `--verbose` | Show detailed info |
 
 ---
 
-## TUI Commands
+## Session Commands
 
-Within the interactive TUI, use `/` commands:
+### session list
 
-### Session
+Display all sessions.
 
-| Command | Description |
-|---------|-------------|
-| `/new` | Start a new session |
-| `/sessions` | List all sessions |
-| `/resume <id>` | Resume a session |
-| `/share` | Share current session |
+```bash
+opensploit session list
+```
 
-### Configuration
+| Flag | Description |
+|------|-------------|
+| `--max-count`, `-n` | Limit results |
+| `--format` | Output format |
 
-| Command | Description |
-|---------|-------------|
-| `/connect` | Configure LLM provider |
-| `/models` | List available models |
-| `/model <name>` | Switch model |
-| `/agent <name>` | Switch agent |
+### export
 
-### Phase Control
+Export session as JSON.
 
-| Command | Description |
-|---------|-------------|
-| `/phase` | Show current phase |
-| `/phase <name>` | Switch to phase |
-| `/findings` | Show current findings |
+```bash
+opensploit export <sessionID>
+```
 
-### Tools
+### import
 
-| Command | Description |
-|---------|-------------|
-| `/tools` | List available tools |
-| `/tool <name>` | Get tool info |
+Import session from file or share URL.
 
-### Utilities
+```bash
+opensploit import <file>
+opensploit import https://opensploit.ai/share/abc123
+```
 
-| Command | Description |
-|---------|-------------|
-| `/undo` | Undo last action |
-| `/redo` | Redo undone action |
-| `/clear` | Clear screen |
-| `/help` | Show help |
-| `/quit` | Exit OpenSploit |
+---
+
+## MCP Commands
+
+### mcp add
+
+Add an MCP server.
+
+```bash
+opensploit mcp add <name> <command>
+```
+
+### mcp list
+
+List configured MCP servers.
+
+```bash
+opensploit mcp list
+```
+
+### mcp auth
+
+Authenticate with MCP server.
+
+```bash
+opensploit mcp auth <name>
+```
+
+### mcp logout
+
+Remove MCP server authentication.
+
+```bash
+opensploit mcp logout <name>
+```
+
+### mcp debug
+
+Debug MCP server connection.
+
+```bash
+opensploit mcp debug <name>
+```
+
+---
+
+## Statistics
+
+### stats
+
+Show token usage and costs.
+
+```bash
+opensploit stats
+```
+
+| Flag | Description |
+|------|-------------|
+| `--days` | Time period (default: 30) |
+| `--tools` | Show tool usage |
+| `--models` | Show model breakdown |
+| `--project` | Filter by project |
+
+---
+
+## System Commands
+
+### upgrade
+
+Update to latest or specific version.
+
+```bash
+opensploit upgrade
+opensploit upgrade 1.2.3
+```
+
+| Flag | Description |
+|------|-------------|
+| `--method`, `-m` | Update method |
+
+### uninstall
+
+Remove OpenSploit.
+
+```bash
+opensploit uninstall
+```
+
+| Flag | Description |
+|------|-------------|
+| `--keep-config`, `-c` | Keep config files |
+| `--keep-data`, `-d` | Keep data files |
+| `--dry-run` | Preview removal |
+| `--force`, `-f` | Skip confirmation |
+
+<Warning>
+Uninstall removes all OpenSploit files. Use `--keep-data` to preserve session history.
+</Warning>
+
+---
+
+## Global Flags
+
+These flags work with any command.
+
+| Flag | Description |
+|------|-------------|
+| `--help`, `-h` | Show help |
+| `--version`, `-v` | Show version |
+| `--print-logs` | Print debug logs |
+| `--log-level` | Set log verbosity |
 
 ---
 
@@ -129,39 +325,56 @@ Within the interactive TUI, use `/` commands:
 
 | Variable | Description |
 |----------|-------------|
-| `OPENSPLOIT_CONFIG` | Path to config file |
-| `OPENSPLOIT_CONFIG_DIR` | Path to config directory |
-| `OPENSPLOIT_MODEL` | Default model |
-| `ANTHROPIC_API_KEY` | Anthropic API key |
-| `OPENAI_API_KEY` | OpenAI API key |
-| `GOOGLE_API_KEY` | Google API key |
+| `OPENSPLOIT_CONFIG` | Config file path |
+| `OPENSPLOIT_CONFIG_CONTENT` | Inline config JSON |
+| `OPENSPLOIT_DISABLE_AUTOUPDATE` | Disable update checks |
+| `OPENSPLOIT_ENABLE_EXPERIMENTAL` | Enable experimental features |
+
+**Provider API Keys:**
+
+| Variable | Provider |
+|----------|----------|
+| `ANTHROPIC_API_KEY` | Anthropic |
+| `OPENAI_API_KEY` | OpenAI |
+| `GOOGLE_API_KEY` | Google |
+| `GROQ_API_KEY` | Groq |
+| `TOGETHER_API_KEY` | Together AI |
+| `MISTRAL_API_KEY` | Mistral |
 
 ---
 
 ## Examples
 
-### Quick Scan
+### Non-interactive scan
 
 ```bash
-opensploit run "Quick scan of 10.10.10.1"
+opensploit run "Scan 10.10.10.1 for open ports and services"
 ```
 
-### Targeted Testing
+### Resume and continue
 
 ```bash
-opensploit run "Test 10.10.10.1:80 for SQL injection" --agent exploit
+opensploit --continue
 ```
 
-### Resume Session
+### CI/CD integration
 
 ```bash
-opensploit sessions
-# Note the session ID
-opensploit resume abc123
+opensploit run \
+  --format json \
+  --model anthropic/claude-sonnet-4-5 \
+  "Security audit of the codebase" \
+  > audit.json
 ```
 
-### Generate Report
+### Start API server
 
 ```bash
-opensploit report abc123 --format html > report.html
+opensploit serve --port 8080 --cors "http://localhost:3000"
+```
+
+### Export session
+
+```bash
+opensploit export abc123 > session.json
 ```

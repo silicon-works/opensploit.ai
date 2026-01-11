@@ -2,6 +2,10 @@
 
 OpenSploit supports **75+ LLM providers** through the AI SDK and Models.dev. You can use cloud providers or run models locally.
 
+<Tip>
+For offline, private operation, use Ollama with local models. No data leaves your machine.
+</Tip>
+
 ---
 
 ## Adding a Provider
@@ -11,6 +15,10 @@ OpenSploit supports **75+ LLM providers** through the AI SDK and Models.dev. You
 3. Enter your API key
 
 Credentials are stored in `~/.local/share/opensploit/auth.json`.
+
+<Note>
+Use environment variables or file references in config to avoid storing keys in plain text. See [Configuration](/docs/config#variables).
+</Note>
 
 ---
 

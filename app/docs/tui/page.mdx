@@ -32,7 +32,14 @@ opensploit /path/to/pentest/engagement
 Resume a previous session:
 
 ```bash
+opensploit --continue
 opensploit --session <session-id>
+```
+
+Start with a specific model:
+
+```bash
+opensploit --model ollama/llama3.1
 ```
 
 ---
@@ -46,6 +53,10 @@ Analyze the vulnerabilities in @nmap_scan.xml
 ```
 
 The `@` symbol triggers fuzzy file search, allowing you to quickly find and include file contents in your conversation.
+
+<Tip>
+You can reference multiple files: `Compare @scan1.xml and @scan2.xml`
+</Tip>
 
 ---
 
@@ -61,26 +72,71 @@ The command output becomes part of the conversation, enabling follow-up analysis
 
 ---
 
-## Slash Commands
+## Commands
 
-The TUI supports slash commands for common actions:
+The TUI supports slash commands for common actions. Type `/` to see all available commands.
 
-| Command | Function | Keybind |
-|---------|----------|---------|
+| Command | Description | Keybind |
+|---------|-------------|---------|
 | `/connect` | Configure provider API keys | — |
-| `/compact` | Summarize the session | `ctrl+x c` |
+| `/compact` | Compress session history | `ctrl+x c` |
 | `/details` | Toggle tool execution visibility | `ctrl+x d` |
 | `/editor` | Compose in external editor | `ctrl+x e` |
+| `/exit` | Close OpenSploit | `ctrl+x q` |
 | `/export` | Export conversation to Markdown | `ctrl+x x` |
 | `/help` | Display help dialog | `ctrl+x h` |
+| `/init` | Create/update AGENTS.md file | `ctrl+x i` |
 | `/models` | List available models | `ctrl+x m` |
 | `/new` | Start a new session | `ctrl+x n` |
 | `/redo` | Restore undone changes | `ctrl+x r` |
 | `/sessions` | Switch between sessions | `ctrl+x l` |
+| `/share` | Share current session | `ctrl+x s` |
 | `/themes` | List available themes | `ctrl+x t` |
-| `/undo` | Revert last action | `ctrl+x u` |
+| `/undo` | Revert last message and file changes | `ctrl+x u` |
+| `/unshare` | Revoke session sharing | — |
 
-[Learn more about commands →](/docs/commands)
+---
+
+## Keybinds
+
+### Navigation
+
+| Keybind | Action |
+|---------|--------|
+| `↑` / `↓` | Scroll through conversation |
+| `Page Up` / `Page Down` | Scroll by page |
+| `Home` / `End` | Jump to start/end |
+
+### Input
+
+| Keybind | Action |
+|---------|--------|
+| `Enter` | Submit message |
+| `Shift+Enter` | New line |
+| `Escape` | Cancel current operation |
+| `Tab` | Autocomplete file reference |
+
+### Actions
+
+| Keybind | Action |
+|---------|--------|
+| `ctrl+x c` | Compact/summarize session |
+| `ctrl+x d` | Toggle details |
+| `ctrl+x e` | Open external editor |
+| `ctrl+x h` | Show help |
+| `ctrl+x l` | List sessions |
+| `ctrl+x m` | Show models |
+| `ctrl+x n` | New session |
+| `ctrl+x q` | Quit |
+| `ctrl+x r` | Redo |
+| `ctrl+x s` | Share session |
+| `ctrl+x t` | Show themes |
+| `ctrl+x u` | Undo |
+| `ctrl+x x` | Export to Markdown |
+
+<Note>
+Keybinds can be customized in your config file. See [Keybinds](/docs/keybinds) for details.
+</Note>
 
 ---
 
@@ -112,18 +168,18 @@ Configure TUI behavior in `opensploit.json`:
 }
 ```
 
-**Options:**
-
 | Option | Description | Default |
 |--------|-------------|---------|
-| `scroll_speed` | Lines to scroll per input | `3` |
-| `scroll_acceleration.enabled` | Enable smooth scrolling | `true` |
+| `scroll_speed` | Lines per scroll (1-3) | `2` |
+| `scroll_acceleration.enabled` | macOS-style smooth scrolling | `true` |
 
 ---
 
 ## Editor Setup
 
-The `/editor` and `/export` commands use the `EDITOR` environment variable:
+The `/editor` command uses the `EDITOR` environment variable:
+
+**Linux/macOS:**
 
 ```bash
 # VS Code
@@ -136,7 +192,17 @@ export EDITOR="vim"
 export EDITOR="nano"
 ```
 
-On Windows, set this via System Properties or your PowerShell profile.
+**Windows (PowerShell):**
+
+```powershell
+$env:EDITOR = "code --wait"
+```
+
+---
+
+## Username Display
+
+You can toggle username display in the conversation. Access via the command palette or search settings. The preference persists across sessions.
 
 ---
 
@@ -148,4 +214,17 @@ For the best experience:
 - **Unicode support** - For proper icon and border rendering
 - **Minimum 80x24** - Recommended terminal size
 
-Recommended terminals: WezTerm, Alacritty, Ghostty, Kitty, iTerm2.
+**Recommended terminals:**
+
+| Terminal | Platform |
+|----------|----------|
+| WezTerm | Cross-platform |
+| Alacritty | Cross-platform |
+| Ghostty | macOS |
+| Kitty | Linux, macOS |
+| iTerm2 | macOS |
+| Windows Terminal | Windows |
+
+<Warning>
+Some terminals (especially older ones) may not render the TUI correctly. If you experience display issues, try one of the recommended terminals.
+</Warning>

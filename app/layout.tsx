@@ -59,21 +59,12 @@ export const metadata: Metadata = {
     title: "OpenSploit - The Open Source Offensive Security Agent",
     description:
       "AI-powered autonomous penetration testing. Orchestrate 25+ security tools with intelligent automation.",
-    images: [
-      {
-        url: "/og-image.png",
-        width: 1200,
-        height: 630,
-        alt: "OpenSploit - AI-powered penetration testing",
-      },
-    ],
   },
   twitter: {
     card: "summary_large_image",
     title: "OpenSploit - The Open Source Offensive Security Agent",
     description:
       "AI-powered autonomous penetration testing. Orchestrate 25+ security tools with intelligent automation.",
-    images: ["/og-image.png"],
   },
   robots: {
     index: true,

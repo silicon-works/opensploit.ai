@@ -1693,3 +1693,234 @@ p {
   padding-left: var(--space-4);
   font-size: var(--font-size-xs);
 }
+
+/* Solved Machines Ticker */
+[data-component="solved-machines"] {
+  padding: var(--vertical-padding) var(--padding);
+  border-top: 1px solid var(--color-border-weak);
+  overflow: hidden;
+}
+
+[data-component="solved-machines"] [data-slot="header"] {
+  max-width: var(--max-width);
+  margin: 0 auto var(--space-8);
+  text-align: center;
+}
+
+[data-component="solved-machines"] [data-slot="header"] h2 {
+  font-size: var(--font-size-base);
+  font-weight: 500;
+  color: var(--color-text-strong);
+  margin-bottom: var(--space-2);
+}
+
+[data-component="solved-machines"] [data-slot="header"] p {
+  font-size: var(--font-size-sm);
+  color: var(--color-text);
+  max-width: 32rem;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+
+[data-component="solved-machines"] [data-slot="ticker"] {
+  position: relative;
+  max-width: var(--max-width);
+  margin: 0 auto;
+  height: 400px;
+}
+
+[data-component="solved-machines"] [data-slot="gradient-top"],
+[data-component="solved-machines"] [data-slot="gradient-bottom"] {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 80px;
+  z-index: 2;
+  pointer-events: none;
+}
+
+[data-component="solved-machines"] [data-slot="gradient-top"] {
+  top: 0;
+  background: linear-gradient(
+    to bottom,
+    var(--color-background) 0%,
+    transparent 100%
+  );
+}
+
+[data-component="solved-machines"] [data-slot="gradient-bottom"] {
+  bottom: 0;
+  background: linear-gradient(
+    to top,
+    var(--color-background) 0%,
+    transparent 100%
+  );
+}
+
+[data-component="solved-machines"] [data-slot="columns"] {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-4);
+  height: 100%;
+  overflow: hidden;
+}
+
+@media (max-width: 60rem) {
+  [data-component="solved-machines"] [data-slot="columns"] {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  [data-component="solved-machines"] [data-slot="columns"] [data-slot="column"]:last-child {
+    display: none;
+  }
+}
+
+@media (max-width: 40rem) {
+  [data-component="solved-machines"] [data-slot="columns"] {
+    grid-template-columns: 1fr;
+  }
+
+  [data-component="solved-machines"] [data-slot="columns"] [data-slot="column"]:nth-child(2) {
+    display: none;
+  }
+
+  [data-component="solved-machines"] [data-slot="ticker"] {
+    height: 320px;
+  }
+}
+
+[data-component="solved-machines"] [data-slot="column"] {
+  overflow: hidden;
+  position: relative;
+}
+
+[data-component="solved-machines"] [data-slot="scroll"] {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  animation: scroll-down 60s linear infinite;
+}
+
+[data-component="solved-machines"] [data-slot="column"][data-speed="slow"] [data-slot="scroll"] {
+  animation-duration: 80s;
+}
+
+[data-component="solved-machines"] [data-slot="column"][data-speed="medium"] [data-slot="scroll"] {
+  animation-duration: 65s;
+}
+
+[data-component="solved-machines"] [data-slot="column"][data-speed="fast"] [data-slot="scroll"] {
+  animation-duration: 50s;
+}
+
+[data-component="solved-machines"] [data-slot="column"]:hover [data-slot="scroll"] {
+  animation-play-state: paused;
+}
+
+@keyframes scroll-down {
+  0% {
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(-50%);
+  }
+}
+
+/* Machine Card */
+[data-component="solved-machines"] [data-slot="machine"] {
+  display: grid;
+  grid-template-columns: auto 1fr auto auto;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  background: var(--color-background-weak);
+  border: 1px solid var(--color-border-weak);
+  border-radius: 6px;
+  font-size: var(--font-size-sm);
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+[data-component="solved-machines"] [data-slot="machine"]:hover {
+  border-color: var(--color-border);
+  background: var(--color-background);
+}
+
+[data-component="solved-machines"] [data-slot="platform"] {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-weak);
+  font-weight: 500;
+  padding: 2px 6px;
+  background: var(--color-background);
+  border-radius: 3px;
+  border: 1px solid var(--color-border-weak);
+}
+
+[data-component="solved-machines"] [data-slot="name"] {
+  color: var(--color-text-strong);
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+[data-component="solved-machines"] [data-slot="difficulty"] {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 3px 8px;
+  border-radius: 3px;
+  white-space: nowrap;
+}
+
+/* Difficulty Colors */
+[data-component="solved-machines"] [data-slot="machine"][data-difficulty="easy"] [data-slot="difficulty"] {
+  background: hsla(142, 70%, 45%, 0.15);
+  color: hsl(142, 70%, 40%);
+}
+
+[data-component="solved-machines"] [data-slot="machine"][data-difficulty="medium"] [data-slot="difficulty"] {
+  background: hsla(38, 92%, 50%, 0.15);
+  color: hsl(38, 92%, 40%);
+}
+
+[data-component="solved-machines"] [data-slot="machine"][data-difficulty="hard"] [data-slot="difficulty"] {
+  background: hsla(0, 70%, 50%, 0.15);
+  color: hsl(0, 70%, 50%);
+}
+
+[data-component="solved-machines"] [data-slot="machine"][data-difficulty="insane"] [data-slot="difficulty"] {
+  background: hsla(280, 70%, 50%, 0.15);
+  color: hsl(280, 70%, 50%);
+}
+
+[data-component="solved-machines"] [data-slot="status"] {
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--color-background-interactive);
+  opacity: 0.8;
+}
+
+@media (prefers-color-scheme: dark) {
+  [data-component="solved-machines"] [data-slot="machine"][data-difficulty="easy"] [data-slot="difficulty"] {
+    background: hsla(142, 70%, 45%, 0.2);
+    color: hsl(142, 70%, 55%);
+  }
+
+  [data-component="solved-machines"] [data-slot="machine"][data-difficulty="medium"] [data-slot="difficulty"] {
+    background: hsla(38, 92%, 50%, 0.2);
+    color: hsl(38, 92%, 55%);
+  }
+
+  [data-component="solved-machines"] [data-slot="machine"][data-difficulty="hard"] [data-slot="difficulty"] {
+    background: hsla(0, 70%, 50%, 0.2);
+    color: hsl(0, 70%, 60%);
+  }
+
+  [data-component="solved-machines"] [data-slot="machine"][data-difficulty="insane"] [data-slot="difficulty"] {
+    background: hsla(280, 70%, 50%, 0.2);
+    color: hsl(280, 70%, 60%);
+  }
+}

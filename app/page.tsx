@@ -4,6 +4,7 @@ import { InstallTabs } from "@/components/install-tabs";
 import { Legal } from "@/components/legal";
 import { FAQItem } from "@/components/faq";
 import { Newsletter } from "@/components/newsletter";
+import { SolvedMachines } from "@/components/solved-machines";
 import { config, features, faqItems } from "@/lib/config";
 
 const metrics = [
@@ -39,6 +40,9 @@ export default function Home() {
             ))}
           </div>
         </section>
+
+        {/* Solved Machines Ticker */}
+        <SolvedMachines />
 
         {/* Features Section */}
         <section data-component="features">

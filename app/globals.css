@@ -1924,3 +1924,51 @@ p {
     color: hsl(280, 70%, 60%);
   }
 }
+
+/* =============================================================================
+   404 Not Found
+   ============================================================================= */
+
+[data-component="not-found"] {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: calc(100vh - var(--header-height) - 200px);
+  padding: var(--space-12) var(--space-6);
+}
+
+[data-component="not-found"] [data-slot="content"] {
+  text-align: center;
+}
+
+[data-component="not-found"] [data-slot="ascii"] {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-base);
+  color: var(--color-interactive);
+  line-height: 1.2;
+  margin-bottom: var(--space-8);
+}
+
+[data-component="not-found"] h1 {
+  font-size: var(--font-size-3xl);
+  font-weight: 600;
+  color: var(--color-strong);
+  margin-bottom: var(--space-4);
+}
+
+[data-component="not-found"] p {
+  font-size: var(--font-size-base);
+  color: var(--color-text);
+  margin-bottom: var(--space-8);
+}
+
+[data-component="not-found"] [data-slot="back"] {
+  color: var(--color-interactive);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  transition: color 0.15s ease;
+}
+
+[data-component="not-found"] [data-slot="back"]:hover {
+  color: var(--color-strong);
+}

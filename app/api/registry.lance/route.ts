@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 
 const RELEASE_URL =
-  "https://github.com/silicon-works/mcp-tools/releases/download/registry-latest/registry.yaml";
+  "https://github.com/silicon-works/mcp-tools/releases/download/registry-latest/registry.lance.tar.gz";
 
 export async function GET() {
   try {
@@ -16,17 +16,18 @@ export async function GET() {
 
     if (!response.ok) {
       return NextResponse.json(
-        { error: "Failed to fetch registry", status: response.status },
+        { error: "Failed to fetch registry lance archive", status: response.status },
         { status: 502 }
       );
     }
 
-    const yaml = await response.text();
+    const body = await response.arrayBuffer();
 
-    return new NextResponse(yaml, {
+    return new NextResponse(body, {
       status: 200,
       headers: {
-        "Content-Type": "text/yaml; charset=utf-8",
+        "Content-Type": "application/gzip",
+        "Content-Disposition": "attachment; filename=registry.lance.tar.gz",
         "Cache-Control": "public, s-maxage=300, stale-while-revalidate=3600",
         "X-Source": "github/silicon-works/mcp-tools/releases",
       },
@@ -34,7 +35,7 @@ export async function GET() {
   } catch (error) {
     return NextResponse.json(
       {
-        error: "Registry fetch failed",
+        error: "Registry lance fetch failed",
         message: error instanceof Error ? error.message : "Unknown error",
       },
       { status: 500 }

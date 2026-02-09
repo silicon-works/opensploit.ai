@@ -35,6 +35,14 @@ const nextConfig: NextConfig = {
         source: "/registry.yaml",
         destination: "/api/registry",
       },
+      {
+        source: "/registry.sha256",
+        destination: "/api/registry.sha256",
+      },
+      {
+        source: "/registry.lance.tar.gz",
+        destination: "/api/registry.lance",
+      },
     ];
   },
 
